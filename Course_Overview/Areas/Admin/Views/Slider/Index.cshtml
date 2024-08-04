@@ -1,0 +1,95 @@
+﻿@using LModels.Client
+@model IEnumerable<Slider>
+
+<div class="row">
+    <h4 class="card-title">Slider List</h4>
+    <div class="text-end">
+        <a class="btn btn-secondary" asp-action="Create" asp-area="Admin">
+            <i class="bi bi-plus-circle"></i>
+            Create a new Slider
+        </a>
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th> SliderID </th>
+                <th> Title</th>
+                <th> Status</th>
+                <th> Description</th>
+                <th> Image </th>
+                <th> Actions </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr id="topicRow_@item.SliderID">
+                    <td class="py-1">@item.SliderID</td>
+                    <td>@item.Title</td>
+                    <td>
+                        <form asp-action="UpdateStatus" method="post" style="display:inline;">
+                            <input type="hidden" name="id" value="@item.SliderID" />
+                            <input type="hidden" name="actionType" value="@(item.Status ? "Disactivate" : "Activate")" />
+
+                            @if (item.Status == true)
+                            {
+                                <button type="submit" name="actionType" class="btn btn-primary">Activate</button>
+                            }
+                            else
+                            {
+                                <button type="submit" name="actionType" class="btn btn-danger">Disactivate</button>
+                            }
+
+                        </form>
+                    </td>
+                    <td>
+                        <div class="description-container" id="description_@item.SliderID">
+                            @item.Description
+                        </div>
+                        <button class="btn btn-link p-0" onclick="showFullDescription('@item.SliderID')">Read more</button>
+                    </td>
+                    <td>
+                        <img src="~/@item.ImagePath" alt="@item.Title" style="width: 100px; height: 100px;" />
+                    </td>
+                    <td>
+                        <a class="btn btn-warning" asp-area="Admin" asp-route-id="@item.SliderID" asp-action="Update">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+                        <button class="btn btn-danger" onclick="deleteSlider('@item.SliderID')">
+                            <i class="bi bi-trash3"></i>
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@section scripts {
+    @*Đoạn mã hiển thị thông báo alert*@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/AdminLayout/assets/js/Notification.js"></script>
+    <script>
+        function showFullDescription(id) {
+            var descriptionElement = document.getElementById("description_" + id);
+            Swal.fire({
+                title: 'Description',
+                text: descriptionElement.textContent,
+                icon: 'info',
+                confirmButtonText: 'Close'
+            });
+        }
+    </script>
+}
+
+<style>
+    .description-container {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 200px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+</style>

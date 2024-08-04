@@ -1,0 +1,41 @@
+﻿@model LModels.ExModel.EX_StudentExamResult
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>EX_StudentExamResult</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="StudentID" />
+            <input type="hidden" asp-for="ExamID" />
+            <input type="hidden" asp-for="QuestionID" />
+            <div class="form-group">
+                <label asp-for="StudentAnswers" class="control-label"></label>
+                <input asp-for="StudentAnswers" class="form-control" />
+                <span asp-validation-for="StudentAnswers" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsCorrect" /> @Html.DisplayNameFor(model => model.IsCorrect)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,31 @@
+﻿@using LModels
+@model IEnumerable<Class>
+
+<div class="row">
+    <h4 class="card-title">Class List</h4>
+    <div class="text-end">
+        <a class="btn btn-secondary" asp-action="Create" asp-area="Admin">
+            <i class="bi bi-plus-circle"></i>
+            Create a new Class
+        </a>
+    </div>
+
+    <table class="table table-striped" id="classTable">
+        <thead>
+            <tr>
+                <th> ClassID </th>
+                <th> ClassName</th>
+                <th> Teacher</th>
+                <th> Fee</th>
+                <th> ClassType </th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section scripts {
+    @*Đoạn mã hiển thị thông báo alert*@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/AdminLayout/assets/js/Notification.js"></script>
+    <script src="~/AdminLayout/assets//js/Class.js"></script>
+} 

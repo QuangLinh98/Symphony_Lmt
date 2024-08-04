@@ -1,0 +1,27 @@
+﻿@using LModels
+@model Role
+
+<div class="card shadow boder-0 mt-4">
+	<div class="card-body p-4">
+		<h2>Create Role</h2>
+		<form class="bg-gray" asp-action="Create">
+			<div class="mb-3 mt-3 form-group">
+				<label for="rolename">Role name:</label>
+				<input type="text" class="form-control"
+					   placeholder="Enter Role name" asp-for="RoleName">
+				<span class="text-danger" asp-validation-for="RoleName"></span>
+			</div>
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="rolecode">Role code:</label>
+				<input type="text" class="form-control"
+					   placeholder="Enter Role code" asp-for="RoleCode">
+				<span class="text-danger" asp-validation-for="RoleCode"></span>
+			</div>
+
+		
+			<button type="submit" class="btn btn-secondary" asp-action="Index">Back</button>
+			<button type="submit" class="btn btn-secondary">Submit</button>
+		</form>
+	</div>
+</div>

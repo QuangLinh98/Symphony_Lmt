@@ -1,0 +1,64 @@
+﻿@model LModels.Schedule
+
+
+<h2>Update Schedule</h2>
+
+<form asp-action="Update" method="post">
+    <input type="hidden" asp-for="ScheduleID">
+
+    <div class="mb-3">
+        <label asp-for="CourseID" class="form-label">Course</label>
+        <select asp-for="CourseID" class="form-select" asp-items="ViewBag.Courses">
+            <option value="">Select Topic</option>
+        </select>
+        <span asp-validation-for="CourseID" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ClassID" class="form-label">Class</label>
+        <select asp-for="ClassID" class="form-select" asp-items="ViewBag.Classes">
+            <option value="">Select Class</option>
+        </select>
+        <span asp-validation-for="ClassID" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="StartDate" class="form-label">Start Date</label>
+        <input asp-for="StartDate" class="form-control" type="date" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EndDate" class="form-label">End Date</label>
+        <input asp-for="EndDate" class="form-control" type="date" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="StartTime" class="form-label">Start Time</label>
+        <input asp-for="StartTime" class="form-control" type="time" />
+        <span asp-validation-for="StartTime" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="EndTime" class="form-label">End Time</label>
+        <input asp-for="EndTime" class="form-control" type="time" />
+        <span asp-validation-for="EndTime" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="RecurringDays" class="form-label">Recurring Days</label>
+        <input asp-for="RecurringDays" class="form-control" />
+        <span asp-validation-for="RecurringDays" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Room" class="form-label">Room</label>
+        <input asp-for="Room" class="form-control" />
+        <span asp-validation-for="Room" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+

@@ -1,0 +1,194 @@
+﻿@using Newtonsoft.Json
+@using LModels
+@using Course_Overview.Helper
+@inject IHttpContextAccessor HttpContextAccessor
+@model LModels.ViewModels.CourseDetailViewModel
+@{
+	var userJson = HttpContextAccessor.HttpContext.Session.GetString("userSession");
+	var user = userJson != null ? JsonConvert.DeserializeObject<User>(userJson) : null;
+	var Name = user?.Name ?? string.Empty;
+	var Email = user?.Email ?? string.Empty;
+}
+
+<div class="container-fluid p-0 mb-5">
+	<div class="row mb-4">
+		<div class="owl-carousel header-carousel position-relative">
+			@{
+				var selectedSlider = Model.Sliders.FirstOrDefault(s => s.SliderID == Model.SpecificSliderId);
+			}
+			@if (selectedSlider != null)
+			{
+				<div class="owl-carousel-item position-relative">
+					<img class="img-fluid" src="~/@selectedSlider.ImagePath" alt="@selectedSlider.Title" style="height: 600px">
+					<div class="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center" style="background: rgba(24, 29, 56, .7);">
+						<div class="container">
+							<div class="row justify-content-start">
+								<div class="col-sm-10 col-lg-8">
+
+									<h1 class="display-3 text-white animated slideInDown">@selectedSlider.Title</h1>
+									<p class="fs-5 text-white mb-4 pb-2">@selectedSlider.Description</p>
+									<a href="" class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Read More</a>
+									<a href="" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Register Now</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+	<div class="container">
+		<div class="row">
+
+			<div class="col-8">
+				<div class="container mt-5">
+					<h2>@Model.Course.CourseName</h2>
+					<p>@Html.Raw(Model.Course.Description)</p>
+
+					<h4>Course Lessons</h4>
+					<div class="row">
+						@{
+							int lessonCounter = 1;
+						}
+						@foreach (var topic in Model.Topics)
+						{
+							<div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+								<div class="card" style="width: 100%; height: 14rem">
+									<div class="card-body">
+										<span>Lession @lessonCounter</span>
+										<h5 class="card-title">@topic.TopicName</h5>
+										<div class="description-container" id="description_@topic.TopicID">
+											<p class="card-text">@Html.Raw(topic.Description)</p>
+										</div>
+										<button class="btn btn-link p-0" onclick="showFullDescription('@topic.TopicID')">Read more</button>
+									</div>
+								</div>
+							</div>
+							lessonCounter++; // Tăng biến đếm sau mỗi vòng lặp
+						}
+					</div>
+
+					<h4 class="mt-4">Teaching Methods</h4>
+					<p>Combination of theoretical lectures and practical lab sessions.</p>
+					<p>Group discussions and case studies.</p>
+
+					<h4>Evaluation and Assessment</h4>
+					<p>Weekly theory tests.</p>
+					<p>Practical assignments at the end of the course.</p>
+
+					<h4>Career Opportunities</h4>
+					<p>Network Technician</p>
+					<p>System Network Administrator</p>
+
+					<p>
+						<a asp-action="Index" asp-controller="Course" class="btn btn-secondary">Back to Courses</a>
+					</p>
+				</div>
+			</div>
+			<div class="col-4 sidebar  mt-2">
+				<div class="text-center">
+					@if (!string.IsNullOrEmpty(Model.Course.ImagePath))
+					{
+						<img src="~/@Model.Course.ImagePath" alt="@Model.Course.CourseName" class="img-fluid rounded" style="max-height: 200px; object-fit: cover; width:400px" />
+					}
+				</div>
+				<div class="text-center">
+					@{
+						if (user != null)
+						{
+							<a asp-action="RegisterCourse" asp-controller="Course" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#joinNowModal" data-topic-name="@Model.Course.CourseName" style="border-radius: 30px; padding: 10px 20px; font-size: 16px; transition: background-color 0.3s, color 0.3s;">
+								Register
+							</a>
+						}
+						else
+						{
+							<div class="alert alert-danger mt-4" role="alert">
+								Please log in to register for this course.
+							</div>
+						}
+					}
+					
+				</div>
+				<dl class="row">
+					<dt class="col-sm-3">Duration: </dt>
+					<dd class="col-sm-9">@Model.Course.Duration months</dd>
+
+					<dt class="col-sm-3">Fee: </dt>
+					<dd class="col-sm-9">$@Model.Course.Fee</dd>
+
+					<dt class="col-sm-3">Entry Requirements: </dt>
+					<dd class="col-sm-9">@Html.Raw(Model.Course.EntryRequirements)</dd>
+
+					<dt class="col-sm-3">Study Materials: </dt>
+					<dd class="col-sm-9">@Html.Raw(Model.Course.StudyMaterials)</dd>
+
+					<dt class="col-sm-3">Lab Facilities: </dt>
+					<dd class="col-sm-9">@Html.Raw(Model.Course.LabFacilities)</dd>
+				</dl>
+			</div>
+
+		</div>
+	</div>
+</div>
+
+@*Register Course Modal *@
+
+
+<div class="modal fade" id="joinNowModal" tabindex="-1" aria-labelledby="joinNowModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="joinNowModalLabel">Register</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form id="joinNowForm" action="@Url.Action("RegisterCourse", "Course")" method="post">
+					<input type="hidden" name="CourseId" value="@Model.Course.CourseID" />
+
+					<div class="mb-3">
+						<label for="fullName" class="form-label">Name</label>
+						<input type="text" class="form-control" id="fullName" name="FullName" value="@Name" required>
+					</div>
+					<div class="mb-3">
+						<label for="email" class="form-label">Email</label>
+						<input type="email" class="form-control" id="email" name="Email" value="@Email" required>
+					</div>
+					<div class="mb-3">
+						<label for="topicName" class="form-label">Subject</label>
+						<input type="text" class="form-control" id="topicName" name="TopicName" readonly>
+					</div>
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+
+@section scripts {
+	@*Đoạn mã hiển thị thông báo alert*@
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="~/js/CourseRegister.js"></script>
+	<script src="~/AdminLayout/assets/js/Notification.js"></script>
+	<script>
+		function showFullDescription(id) {
+			var descriptionElement = document.getElementById("description_" + id);
+			Swal.fire({
+				title: 'Description',
+				text: descriptionElement.textContent,
+				icon: 'info',
+				confirmButtonText: 'Close'
+			});
+		}
+	</script>
+}
+
+<style>
+	.description-container {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		width: 200px;
+		display: inline-block;
+		vertical-align: middle;
+	}
+</style>

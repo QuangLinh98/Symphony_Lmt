@@ -1,0 +1,65 @@
+﻿@using LModels
+@model IEnumerable<Course>
+
+<div class="row">
+    <h4 class="card-title">Course List</h4>
+    <div class="text-end">
+        <a class="btn btn-secondary" asp-action="Create" asp-area="Admin">
+            <i class="bi bi-plus-circle"></i> Create a new Course
+        </a>
+    </div>
+
+    <table class="table table-striped" id="courseTable">
+        <thead>
+            <tr>
+                <th>CourseID</th>
+                <th>Course Name</th>
+                <th>Duration</th>
+                <th>Level</th>
+                <th>Fee</th>
+                <th>EntryRequirements</th>
+                <th>StudyMaterials</th>
+                <th>LabFacilities</th>
+                <th>Image</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+    </table>
+
+</div>
+
+@section scripts {
+    @*Đoạn mã hiển thị thông báo alert*@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/AdminLayout/assets/js/Notification.js"></script>    
+    <script src="~/AdminLayout//assets/js/Course.js"></script>
+
+    <script>
+        function showFullContent(courseId, type) {
+            let descriptionElement;
+            if (type === 'entry') {
+                descriptionElement = document.getElementById("entry_" + courseId);
+            } else if (type === 'study') {
+                descriptionElement = document.getElementById("study_" + courseId);
+            } else if (type === 'lab') {
+                descriptionElement = document.getElementById("lab_" + courseId);
+            }
+            Swal.fire({
+                title: 'Course',
+                text: descriptionElement.textContent,
+                icon: 'info',
+                confirmButtonText: 'Close'
+            });
+        }
+    </script>
+}
+<style>
+    .description-container {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        width: 100px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+</style>

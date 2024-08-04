@@ -1,0 +1,8 @@
+﻿@model IEnumerable<LModels.Course>
+
+<div class="dropdown-menu fade-down m-0">
+    @foreach (var course in Model)
+    {
+        <a class="dropdown-item" asp-controller="Course" asp-action="CourseDetail" asp-route-id="@course.CourseID">@course.CourseName</a>
+    }
+</div>

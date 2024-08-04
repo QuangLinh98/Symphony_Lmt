@@ -1,0 +1,31 @@
+﻿@{
+    Layout = null;
+}
+
+
+<div class="form-group">
+    <label>Subject Name</label>
+    <input id="SubjectNameAdd" name="SubjectNameAdd" type="text" class="form-control form-control-lg" aria-label="TimeTo">
+</div>
+<div class="form-group">
+    <label>Qty Lesson</label>
+    <input onchange="RenderRowContainer('TableContainer')" name="QtyContainer" id="QtyContainer" type="number" class="form-control" value="0" min="0">
+</div>
+<div class="row justify-content-center">
+    <h4 style="font-weight:bolder" class="card-title">List Lesson</h4>
+    <table class="table table-hover" style="width: 60%; margin: auto;">
+        <thead style="font-weight: bolder;">
+            <tr>
+                <td width="10%">No#:</td>
+                <td width="30%">Lesson Number</td>
+                <td width="50%">Lesson Name</td>
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody id="TableContainer">
+            <!-- Rows will be added here dynamically -->
+        </tbody>
+    </table>
+</div>
+
+

@@ -1,0 +1,70 @@
+﻿@using LModels
+@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<LModels.ExModel.EX_Question>
+@{
+    Layout = null;
+    // ViewBag._Exams = _Exams;
+    //  ViewBag.questions = questions;
+    // ViewBag._Subject = _Subject;
+    // ViewBag._Lession = _Lession;
+    // var Exams = ViewBag._Exams as LModels.ExModel.EX_Exam;
+    // var ExamQuestions = ViewBag._ExamQuestions as List<LModels.ExModel.EX_ExamQuestion>;
+    // var Subject = ViewBag._Subject as LModels.ExModel.EX_Subject;
+    var questions = ViewBag.questions as List<LModels.ExModel.EX_Question>;
+}
+
+
+
+
+<input hidden id="Page" value="@ViewBag.Page" />
+<h4>Question Library</h4>
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
+            @{
+                foreach (var item in Model)
+                {
+                    <tr style="font-weight:bolder">
+                
+                        <td>@item.QuestionText</td>
+                        <td>
+                            <button onclick="SelectToExam(@item.QuestionID)" type="button" class="btn btn-info">Select</button>
+                            
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <table class="table">
+                                @foreach (var item2 in item.Answers)
+                                {
+                                    <tr>
+                                        <td width="80%"> @item2.AnswerText</td>
+                                        <td> @item2.IsCorrect</td>
+                                    </tr>
+
+                                }
+                            </table>
+                        </td>
+                    </tr>
+               
+                }
+            }
+        </table>
+    </div>
+</div>
+<div class="dataTables_paginate paging_bootstrap_full_number pull-right" id="sample_1_paginate">
+    @Html.PagedListPager(Model, pageNumber => Url.Action("PartialList", new { page = pageNumber }),
+            new PagedListRenderOptions
+    {
+        Display = PagedListDisplayMode.IfNeeded,
+        DisplayItemSliceAndTotal = true,
+        UlElementClasses = new[] { "pagination" },
+        LiElementClasses = new[] { "page-item" },
+        PageClasses = new[] { "page-link" }
+    })
+</div>
+
+
+
+

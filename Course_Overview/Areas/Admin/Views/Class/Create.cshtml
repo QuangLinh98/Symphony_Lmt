@@ -1,0 +1,50 @@
+﻿@using LModels
+@model Class
+
+<div class="card shadow boder-0 mt-4">
+	<div class="card-body p-4">
+		<h2>Create Class</h2>
+		<form class="bg-gray" asp-action="Create" enctype="multipart/form-data">
+			<div class="mb-3 mt-3 form-group">
+				<label for="name">Title:</label>
+				<input type="text" class="form-control"
+					   placeholder="Enter ClassName" asp-for="ClassName">
+				<span class="text-danger" asp-validation-for="ClassName"></span>
+			</div>
+
+			<div class="mb-3 mt-3">
+				<label for="Teacher">Teacher:</label>
+				<select asp-items="@ViewBag.Teacher" class="form-select"
+						asp-for="TeacherID"></select>
+			</div>
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="Fee">Fee:</label>
+				<input type="number" class="form-control"
+					   placeholder="Enter Fee" asp-for="Fee">
+				<span class="text-danger" asp-validation-for="Fee"></span>
+			</div>
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="ClassType">Class type:</label>
+				<select class="custom-select" asp-for="ClassType">
+					<option checked>----- Select list ----</option>
+					<option value="Basic">Basic</option>
+					<option value="Advanced">Advanced</option>
+				</select>
+				<span class="text-danger" asp-validation-for="ClassType"></span>
+			</div>
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="Description">Description:</label>
+				<textarea type="text" class="form-control"
+						  placeholder="Enter Description" asp-for="Description"></textarea>
+				<span class="text-danger" asp-validation-for="Description"></span>
+			</div>
+
+			
+			<button type="submit" class="btn btn-secondary" asp-action="Index">Back</button>
+			<button type="submit" class="btn btn-secondary">Submit</button>
+		</form>
+	</div>
+</div>

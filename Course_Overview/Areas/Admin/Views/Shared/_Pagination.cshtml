@@ -1,0 +1,41 @@
+﻿@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList
+
+<div class="col-12 text-end">
+    @Html.PagedListPager(Model, page => Url.Action(ViewContext.RouteData.Values["action"].ToString(), new { page }),
+            new PagedListRenderOptions
+    {
+        // Class cho các thẻ <li> trong pagination
+        LiElementClasses = new[] { "page-item" },
+
+        // Class cho các thẻ <a> trong pagination
+        PageClasses = new[] { "page-link" },
+
+        // Class cho thẻ <ul> trong pagination
+        UlElementClasses = new[] { "pagination", "justify-content-end" },
+
+        // Class cho thẻ <div> bao quanh pagination
+        ContainerDivClasses = new[] { "text-center" },
+
+        // Hiển thị liên kết đến trang đầu tiên nếu cần thiết
+        DisplayLinkToFirstPage = PagedListDisplayMode.IfNeeded,
+
+        // Hiển thị liên kết đến trang cuối cùng nếu cần thiết
+        DisplayLinkToLastPage = PagedListDisplayMode.IfNeeded,
+
+        // Hiển thị liên kết đến trang trước đó nếu cần thiết
+        DisplayLinkToPreviousPage = PagedListDisplayMode.IfNeeded,
+
+        // Hiển thị liên kết đến trang tiếp theo nếu cần thiết
+        DisplayLinkToNextPage = PagedListDisplayMode.IfNeeded,
+
+        // Hiển thị liên kết đến các trang cá nhân
+        DisplayLinkToIndividualPages = true,
+
+        // Không hiển thị số lượng trang và vị trí hiện tại
+        DisplayPageCountAndCurrentLocation = false,
+
+        // Số lượng tối đa các trang được hiển thị
+        MaximumPageNumbersToDisplay = 4
+    })
+</div>

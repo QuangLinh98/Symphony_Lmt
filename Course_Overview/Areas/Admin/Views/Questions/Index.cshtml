@@ -1,0 +1,451 @@
+﻿@using LModels
+@model List<LModels.ExModel.EX_Subject>
+
+
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        padding: 0;
+        list-style: none;
+    }
+
+        .pagination li {
+            margin: 0 5px;
+        }
+
+        .pagination a, .pagination span {
+            display: block;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #007bff;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+
+            .pagination a:hover {
+                background-color: #e9ecef;
+            }
+
+        .pagination .active span {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .pagination .disabled span {
+            color: #6c757d;
+            border-color: #dee2e6;
+            cursor: not-allowed;
+        }
+</style>
+
+
+<div class="content-wrapper">
+    <div class="container-flug">
+        @*   <div class="col-12 grid-margin">
+        <div class="card">
+        <div class="card-body">
+        <button id="AddNewTab" class="tablink btn btn-gradient-primary mr-2">AddNew</button>
+        </div>
+        </div>
+        </div> *@
+        <div id="AddNew" class="tabcontent col-12 grid-margin">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title" style="font-weight:bolder">Question Managerment</h4>
+                    <p class="card-description" style="color: #76838f">
+                        Manage Questions by Subject and lesson
+                    </p>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Subject Name:</label>
+                                <div class="col-sm-5">
+                                    <select onchange="filter(1,0)" name="SubjectId" id="SubjectId" class="form-select" aria-label="Default select example">
+                                        @if (Model != null && Model.Any())
+                                        {
+                                            var isFirstEnd = true;
+                                            foreach (var item in Model)
+                                            {
+                                                if (isFirstEnd)
+                                                {
+                                                    <option value="@item.SubjectID" selected>@item.SubjectName</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.SubjectID">@item.SubjectName</option>
+                                                }
+                                                isFirstEnd = false;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <option value="" disabled>No data available</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Question Name:</label>
+                                <div class="col-sm-7" style="font-weight:bolder">
+                                    <input name="QuestionText" id="QuestionText" type="text" class="form-control">
+                                    <button onclick="filter(1, undefined)" style="background: linear-gradient(to right, #da8cff, #9a55ff); color:white; position:relative;top:30px" type="button" class="btn btn-gradient-primary mr-2">Search</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" id="ContentLession">
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Question</h5>
+                <button onclick="Close()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="ModalAdd">
+            </div>
+            <div class="modal-footer">
+                <button onclick="AddSubject()" type="button" class="btn btn-primary">Approve</button>
+                <button onclick="Close()" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModalEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Subject</h5>
+                <button onclick="Close()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="ModalEdit">
+            </div>
+            <div class="modal-footer">
+                <button onclick="Edit()" type="button" class="btn btn-primary">Approve</button>
+                <button onclick="Close()" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @*Đoạn mã hiển thị thông báo alert*@
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/AdminLayout/assets/js/Notification.js"></script>
+    <script src="~/AdminLayout/assets/js/Class.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $(document).on('click', '.page-link', function (event) {
+                event.preventDefault();
+                var page = $(this).attr('href').split('page=')[1];
+
+                filter(page);
+            });
+            filter(1, -2)
+        });
+
+        function filter(page, LessionID) {
+
+            if (page == undefined) {
+                page = $("#Page").val();
+            }
+            if (LessionID == undefined) {
+                LessionID = parseInt($("#LessonID").val(), 10);
+            }
+            var QuestionText = $("#QuestionText").val();
+            var SubjectId = $("#SubjectId").val();
+            var _url = '@Url.Action("PartialList")';
+
+
+            var Model = {};
+            Model.SubjectId = SubjectId
+            Model.page = page
+            Model.LessionID = LessionID
+            Model.QuestionText = QuestionText
+
+            $.ajax({
+                url: _url,
+                data: Model,
+                method: 'POST',
+                dataType: 'html',
+                success: function (data) {
+                    $('#ContentLession').html(data);
+                    /* removeAllRows()*/
+
+                }
+            });
+        }
+        function ChangeIsCorrect(Id) {
+            var _url = '@Url.Action("ChangeIsCorrect")';
+            $.ajax({
+                url: _url,
+                data: { Id: Id },
+                method: 'POST',
+                success: function (data) {
+                    if (data.success === true) {
+                        alert("Succes")
+                        //var page = $("#Page").vale()
+                        filter()
+                    } else {
+                        alert("Fail")
+                    }
+
+                }
+            });
+        }
+        function RenderEditLessonName(Id) {
+            document.getElementById('Question_' + Id).disabled = false;
+        }
+        function RenderModaledit(answerID) {
+            // Enable the input field
+            document.getElementById('answerText_' + answerID).disabled = false;
+        }
+
+        function ChangeAnswerText(Id, input) {
+            var AnswerText = input.value;
+            var _url = '@Url.Action("ChangeAnswerText")';
+            $.ajax({
+                url: _url,
+                data: { Id: Id, AnswerText: AnswerText },
+                method: 'POST',
+                success: function (data) {
+                    if (data.success === true) {
+                        alert("Succes")
+                        filter()
+                    } else {
+                        alert("Fail")
+                    }
+
+                }
+            });
+        }
+
+        function ChangeQuestionText(Id, input) {
+            var QuestionText = input.value;
+            var _url = '@Url.Action("ChangeQuestionText")';
+            $.ajax({
+                url: _url,
+                data: { Id: Id, QuestionText: QuestionText },
+                method: 'POST',
+                success: function (data) {
+                    if (data.success === true) {
+                        alert("Succes")
+                        filter()
+                    } else {
+                        alert("Fail")
+                    }
+
+                }
+            });
+
+        }
+
+        function AddAnswer(questionID) {
+            var inputId = 'username-input-' + questionID;
+            var inputValue = document.getElementById(inputId).value;
+            console.log("Question ID: " + questionID + ", Input Value: " + inputValue);
+            var _url = '@Url.Action("AddAnswer")';
+            $.ajax({
+                url: _url,
+                data: { questionID: questionID, inputValue: inputValue },
+                method: 'POST',
+                success: function (data) {
+                    if (data.success === true) {
+                        alert("Succes")
+                        filter()
+                    } else {
+                        alert("Fail")
+                    }
+
+                }
+            });
+        }
+        function DeleteAnswer(AnswerId) {
+            var _url = '@Url.Action("DeleteAnswer")';
+            $.ajax({
+                url: _url,
+                data: { AnswerId: AnswerId },
+                method: 'POST',
+                success: function (data) {
+                    if (data.success === true) {
+                        alert("Succes")
+                        filter()
+                    } else {
+                        alert("Fail")
+                    }
+
+                }
+            });
+        }
+        function DeleteQuestion(QuestionId) {
+            var _url = '@Url.Action("DeleteQuestion")';
+            $.ajax({
+                url: _url,
+                data: { QuestionId: QuestionId },
+                method: 'POST',
+                success: function (data) {
+                    if (data.success === true) {
+                        alert("Succes")
+                        filter()
+                    } else {
+                        alert("Fail")
+                    }
+
+                }
+            });
+        }
+        function ShowAdd() {
+            $('#myModal').modal('show');
+        }
+        function Close() {
+            $('#myModal').modal('hide');
+            $('#myModalEdit').modal('hide');
+        }
+        function RenderModalAdd() {
+            const LessionID = parseInt($("#LessonID").val(), 10);
+            const SubjectId = $("#SubjectId").val();
+
+            if (LessionID === -1) {
+                alert("Vui Lòng Chọn Lession Trước Khi Add");
+                return;
+            }
+
+            if (!SubjectId) {
+                alert("Vui Lòng Chọn Subject Trước Khi Add");
+                return;
+            }
+
+            const _url = '@Url.Action("RenderModalAdd")';
+
+            $.ajax({
+                url: _url,
+                data: { SubjectId: SubjectId, LessionID: LessionID },
+                method: 'POST',
+                dataType: 'html',
+                success: function (data) {
+                    $('#ModalAdd').html(data);
+                    $('#myModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX error:', status, error);
+                }
+            });
+        }
+
+
+
+
+
+        function RenderRowContainer(TableId) {
+
+            if (TableId == 'TableContainerEdit') {
+                var Qty = $("#QtyContainerEdit").val();
+            } else {
+                var Qty = $("#QtyContainer").val();
+            }
+
+            var DateTime = $("#DateTime").val();
+            var Description = $("#Description").val();
+            var Reason = $("#Reason").val();
+            var table = document.getElementById(TableId);
+            var rowCount = table.getElementsByTagName("tr").length;
+            console.log(rowCount)
+            for (var i = 0; i < Qty; i++) {
+                var newRow = `<tr>
+                                                                                  <td class="stt" style="font-weight: 700;">${rowCount + i}</td>
+                                                                                  <td>
+                                                                                              <input type="text" class="form-control" name="No" required>
+                                                                                  </td>
+                                                                                  <td><button onclick="removeRow(this)" class="btn btn-danger mr-2">-</button>
+                                                                                  </td>
+
+                                                                              </tr>`;
+
+                // Append the new row to the table body
+                //   $("#TableContainer").append(newRow); //TableId
+
+                $(`#TableContainer`).append(newRow);
+                $("#QtyContainer").val(0);
+            }
+        }
+        function removeRow(button) {
+            // Remove the row containing the clicked button
+            $(button).closest('tr').remove();
+
+            // Re-render the serial numbers (stt)
+            reRenderSerialNumbers();
+        }
+        function reRenderSerialNumbers() {
+            $("#TableContainer tr").each(function (index) {
+                $(this).find(".stt").text(index + 1);
+            });
+        }
+        function AddSubject() {
+            var documentAdd = document.getElementById("myModal")
+            var tableRows = documentAdd.querySelectorAll("#TableContainer tr"); // Lấy tất cả các hàng trong bảng
+            var ListContainer = [];
+
+            tableRows.forEach(function (row) {
+                var objectData = {};
+                var inputs = row.querySelectorAll("input");
+                objectData.Answer = inputs[0].value
+                ListContainer.push(objectData)
+            });
+            var ModelQuestionSave = {};
+            ModelQuestionSave.AnswerSave = ListContainer
+            var SubjectIdAdd = $("#SubjectIdAdd").val()
+            var LessionIdAdd = $("#LessionIdAdd").val()
+            var QuestionText = $("#QuestionTextAdd").val()
+            ModelQuestionSave.SubjectIdAdd = SubjectIdAdd
+            ModelQuestionSave.LessionIdAdd = LessionIdAdd
+            ModelQuestionSave.QuestionText = QuestionText
+
+
+            console.log(ModelQuestionSave)
+
+
+            var _url = '@Url.Action("SubmitRequest")';
+            if (ListContainer.length < 1) {
+                alert("Answer Emty");
+                return
+            }
+
+            $.ajax({
+                url: _url,
+                data: { ModelQuestionSave: ModelQuestionSave },
+                method: 'post',
+                success: function (respose) {
+                    if (respose.success === true) {
+                        alert("Succes")
+                        filter()
+                    } else {
+                        alert("Fail")
+                    }
+                }
+            });
+        }
+    </script>
+
+}

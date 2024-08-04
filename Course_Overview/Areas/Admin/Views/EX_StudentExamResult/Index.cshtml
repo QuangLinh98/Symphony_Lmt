@@ -1,0 +1,191 @@
+﻿@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Student Exam Results";
+}
+
+<h2>Score of student and Set up class for student</h2>
+
+<!-- Search Form -->
+<div class="form-group">
+    <input type="text" id="searchInput" class="form-control" placeholder="Search by name...">
+</div>
+
+<!-- Main Form -->
+<form id="studentForm" method="post" action="/AddStudentsToClass">
+    <table class="table" id="studentTable">
+        <thead>
+            <tr>
+                <th>Select</th>
+                <th>Name</th>
+                <th>Date of Birth</th>
+                <th>Exam Name</th>
+                <th>Student code</th>
+                <th>Class</th>
+                <th>
+                    <a href="#" id="sortScore" style="text-decoration: none; color: inherit;">
+                        Score
+                    </a>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" name="selectedItems" value="@item.StudentID" />
+                    </td>
+                    <td>@item.Name</td>
+                    <td>@item.DateOfBirth.ToString("dd/MM/yyyy")</td>
+                    <td>@item.ExamName</td>
+                    <td>@item.CodeStudent</td>
+                    <td>@item.ClassName</td>
+                    <td class="score">@item.Score</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div id="paginationControls"></div>
+
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#classModal">Add Selected to Class</button>
+</form>
+
+<!-- Modal -->
+<div class="modal fade" id="classModal" tabindex="-1" role="dialog" aria-labelledby="classModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="classModalLabel">Select a Class</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <select id="classSelect" class="form-control">
+                    <!-- Classes will be loaded here -->
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" id="submitToClass" class="btn btn-primary">Add to Class</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/js/bootstrap.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const pageSize = 10; // Number of items per page
+            let currentPage = 1;
+            const table = $('#studentTable');
+            const paginationControls = $('#paginationControls');
+            let scoreAsc = false;
+
+            function paginateTable() {
+                const rows = table.find('tbody tr:visible'); // Only visible rows
+                const totalRows = rows.length;
+                const totalPages = Math.ceil(totalRows / pageSize);
+
+                rows.hide();
+                rows.slice((currentPage - 1) * pageSize, currentPage * pageSize).show();
+
+                // Update pagination controls
+                paginationControls.empty();
+                for (let i = 1; i <= totalPages; i++) {
+                    const button = $('<button>')
+                        .text(i)
+                        .addClass('btn btn-light')
+                        .attr('data-page', i)
+                        .on('click', function () {
+                            currentPage = $(this).data('page');
+                            paginateTable();
+                        });
+
+                    if (i === currentPage) {
+                        button.addClass('btn-primary');
+                    }
+
+                    paginationControls.append(button);
+                }
+            }
+
+            function sortTableByScore() {
+                const rows = table.find('tbody tr').get();
+                rows.sort((a, b) => {
+                    const scoreA = parseFloat($(a).find('.score').text());
+                    const scoreB = parseFloat($(b).find('.score').text());
+                    return scoreAsc ? scoreA - scoreB : scoreB - scoreA;
+                });
+
+                $.each(rows, function (index, row) {
+                    table.find('tbody').append(row);
+                });
+
+                scoreAsc = !scoreAsc; // Toggle sort order
+                paginateTable(); // Reapply pagination after sorting
+            }
+
+            $('#sortScore').click(function (e) {
+                e.preventDefault();
+                sortTableByScore();
+            });
+
+            paginateTable(); // Initial call to paginate
+
+            // Load classes into the modal
+            $.ajax({
+                url: '@Url.Action("GetClasses", "EX_StudentExamResult")',
+            type: 'GET',
+            success: function (data) {
+                var select = $('#classSelect');
+                select.empty();
+                select.append('<option value="">Select a class</option>');
+                $.each(data, function (index, classItem) {
+                    select.append('<option value="' + classItem.classID + '">' + classItem.className + '</option>');
+                });
+            }
+        });
+
+        $('#submitToClass').click(function () {
+                var selectedClassId = $('#classSelect').val(); var selectedItems = $('input[name="selectedItems"]:checked').map(function () {
+                    return $(this).val();
+                }).get();
+
+                if (selectedClassId && selectedItems.length > 0) {
+                    $.ajax({
+                        url: '@Url.Action("AddStudentsToClass", "EX_StudentExamResult")',
+                        type: 'POST',
+                        data: {
+                            classId: selectedClassId,
+                            selectedItems: selectedItems
+                        },
+                        success: function (response) {
+                            alert('Students added successfully!');
+                            location.reload(); // Reload the page or update the view as needed
+                        },
+                        error: function (xhr, status, error) {
+                            alert('An error occurred while adding students.');
+                        }
+                    });
+                } else {
+                    alert('Please select a class and at least one student.');
+                }
+            });
+
+            $('#searchInput').on('keyup', function () {
+                const value = $(this).val().toLowerCase();
+                $('#studentTable tbody tr').filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+                });
+                currentPage = 1; // Reset to the first page after search
+                paginateTable();
+            });
+        });
+    </script>
+}

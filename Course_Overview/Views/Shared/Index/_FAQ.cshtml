@@ -1,0 +1,46 @@
+﻿@using LModels.ViewModels
+@model HomeIndexViewModel
+
+<div class="container">
+		<div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+			<h6 class="section-title bg-white text-center text-primary px-3">FAQ</h6>
+			<h1 class="mb-5">General Information</h1>
+		</div>
+		<div class="accordion" id="faqAccordion">
+			@foreach (var faq in Model.FAQs)
+			{
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="heading@faq.FAQID">
+						<button class="accordion-button collapsed faq-question" type="button">
+							<h5>@faq.Question</h5>
+						</button>
+					</h2>
+					<div id="collapse@faq.FAQID" class="accordion-collapse collapse"
+						 aria-labelledby="heading@faq.FAQID" data-parent="#faqAccordion">
+						<div class="accordion-body">
+							@faq.Answer
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	$(document).ready(function () {
+		$('.faq-question').on('click', function () {
+			// Đóng tất cả các câu trả lời trước khi mở câu trả lời của câu hỏi được click
+			$('.accordion-collapse').collapse('hide');
+
+			// Tìm phần tử cha của button được click (div có class accordion-item)
+			var accordionItem = $(this).closest('.accordion-item');
+
+			// Tìm collapse của câu hỏi được click (div có class accordion-collapse)
+			var collapse = accordionItem.find('.accordion-collapse');
+
+			// Mở collapse của câu hỏi được click
+			collapse.collapse('show');
+		});
+	});
+</script>

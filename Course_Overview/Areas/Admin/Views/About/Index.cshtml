@@ -1,0 +1,75 @@
+﻿@using LModels
+@model IEnumerable<AboutUs>
+
+<div class="row">
+	<h4 class="card-title">About List</h4>
+	<div class="text-end">
+		<a class="btn btn-secondary" asp-action="Create" asp-area="Admin">
+			<i class="bi bi-plus-circle"></i>
+			Create a new about
+		</a>
+	</div>
+
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th> STT </th>
+				<th> Title</th>
+				<th> Content</th>
+				<th> Actions </th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr id="topicRow_@item.AboutID">
+					<td class="py-1">@item.AboutID</td>
+					<td>@item.Title</td>
+					<td>
+						<div class="description-container" id="content_@item.AboutID">
+							@Html.Raw(item.Content.Length > 1000 ? item.Content.Substring(0, 1000) + "..." : item.Content)
+						</div>
+						
+						<button class="btn btn-link p-0" onclick="showFullContent('@item.AboutID')">Read more</button>
+					</td>
+
+					<td>
+						<a class="btn btn-warning" asp-area="Admin" asp-route-id="@item.AboutID" asp-action="Update">
+							<i class="bi bi-pencil-fill"></i>
+						</a>
+						<button class="btn btn-danger" onclick="deleteAbout('@item.AboutID')">
+							<i class="bi bi-trash3"></i>
+						</button>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
+@section scripts {
+	@*Đoạn mã hiển thị thông báo alert*@
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<script src="~/AdminLayout/assets/js/Notification.js"></script>
+
+	<script>
+		function showFullContent(id) {
+			var descriptionElement = document.getElementById("content_" + id);
+			Swal.fire({
+				title: 'About Us',
+				text: descriptionElement.textContent,
+				icon: 'info',
+				confirmButtonText: 'Close'
+			});
+		}
+	</script>
+}
+<style>
+	.description-container {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		width: 800px;
+		display: inline-block;
+		vertical-align: middle;
+	}
+</style>

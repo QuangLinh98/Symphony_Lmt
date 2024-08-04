@@ -1,0 +1,78 @@
+﻿@using LModels.ViewModels
+@model HomeIndexViewModel
+
+<div class="container-xxl py-5">
+	<div class="container">
+		<div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+			<h6 class="section-title bg-white text-center text-primary px-3">Courses</h6>
+			<h1 class="mb-5">Popular Topic</h1>
+		</div>
+		<div class="row g-4 justify-content-center">
+
+			@foreach (var topic in Model.Topics.Take(3))
+			{
+				<div class="col-lg-4 col-md-6 wow fadeInUp" data-wow-delay="0.1s">
+					<div class="course-item bg-light">
+						<div class="course-item bg-light Boder-custom">
+							<!-- List of Topic -->
+							<div class="position-relative overflow-hidden rounded-top-lg">
+								<img class="img-fluid Boder-custom" style="height: 300px ; width: 100%" src="~/@topic.ImagePath" alt="@topic.TopicName">
+								<div class="w-100 d-flex justify-content-center position-absolute bottom-0 start-0 mb-4">
+									<a asp-action="TopicDetail" asp-controller="Topic" asp-route-id="@topic.TopicID" class="flex-shrink-0 btn btn-sm btn-primary px-3 border-end" style="border-radius: 30px 0 0 30px;">Read More</a>
+									<button type="button" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;" data-bs-toggle="modal" data-bs-target="#joinNowModal" data-topic-name="@topic.TopicName">Join Now</button>
+							
+								</div>
+							</div>
+							<div class="text-center p-4 pb-0">
+								<div class="mb-3">
+									<small class="fa fa-star text-primary"></small>
+									<small class="fa fa-star text-primary"></small>
+									<small class="fa fa-star text-primary"></small>
+									<small class="fa fa-star text-primary"></small>
+									<small class="fa fa-star text-primary"></small>
+									<small>(123)</small>
+								</div>
+								<h5 class="text-center">@topic.TopicName</h5>
+							</div>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+	</div>
+</div>
+<!-- Modal Register Course HTML -->
+<div class="modal fade" id="joinNowModal" tabindex="-1" aria-labelledby="joinNowModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="joinNowModalLabel">Register</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form id="joinNowForm" action="/Registration/Register" method="post">
+					<div class="mb-3">
+						<label for="fullName" class="form-label">Name</label>
+						<input type="text" class="form-control" id="fullName" name="FullName" required>
+					</div>
+					<div class="mb-3">
+						<label for="phoneNumber" class="form-label">Phone</label>
+						<input type="tel" class="form-control" id="phoneNumber" name="PhoneNumber" required>
+					</div>
+					<div class="mb-3">
+						<label for="email" class="form-label">Email</label>
+						<input type="email" class="form-control" id="email" name="Email" required>
+					</div>
+					<div class="mb-3">
+						<label for="topicName" class="form-label">Subject</label>
+						<input type="text" class="form-control" id="topicName" name="TopicName" readonly>
+					</div>
+					<button type="submit" class="btn btn-primary">Submit</button>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+@section scripts {
+	<script src="~/js/CourseRegister.js"></script>
+} 

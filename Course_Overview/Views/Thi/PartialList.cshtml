@@ -1,0 +1,58 @@
+﻿@using LModels
+
+
+@{
+  
+    Layout = null;
+    var Exams = ViewBag._Exams as LModels.ExModel.EX_Exam;
+    var ExamQuestions = ViewBag._ExamQuestions as List<LModels.ExModel.EX_ExamQuestion>;
+    var Subject = ViewBag._Subject as LModels.ExModel.EX_Subject;
+    var Lession = ViewBag._Lession as List<LModels.ExModel.EX_Lesson>;
+    var result = ViewBag.result as List<LModels.ExModel.EX_StudentExamResult>;
+    var totalCorrectAnswers = result?.Count(r => r.IsCorrect) ?? 0;
+    var total = ExamQuestions.Count();
+
+}
+<input hidden id="totalCorrectAnswers" value="@totalCorrectAnswers" />
+<input hidden id="total" value="@total" />
+<table class="table">
+    @if (ExamQuestions != null)
+    {
+        var No = 1;
+        foreach (var item in ExamQuestions)
+        {
+            <tr style="font-weight:bolder">
+                <td width="10%">Câu: @No</td>
+                <td>@item.Question.QuestionText</td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <!-- Adjust colspan as needed -->
+                    <table class="table">
+                        @foreach (var item2 in item.Question.Answers)
+                        {
+                            // Kiểm tra nếu câu trả lời đã được chọn
+                            var isChecked = result.Any(x => x.StudentAnswers == item2.AnswerID);
+
+                            <tr style="background-color: @(isChecked ? "lightgreen" : "transparent")">
+                                <td width="80%">
+                                    <input onclick="Submit(@Exams.ExamID,@item.QuestionID, @item2.AnswerID )" type="checkbox" @(isChecked ? "checked" : "") />
+                                    @item2.AnswerText
+                                </td>
+                            </tr>
+                        }
+                    </table>
+
+
+                </td>
+            </tr>
+            No++;
+        }
+    }
+    else
+    {
+        <tr>
+            <td colspan="2">No exam questions available.</td>
+        </tr>
+    }
+</table>

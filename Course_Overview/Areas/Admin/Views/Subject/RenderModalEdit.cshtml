@@ -1,0 +1,59 @@
+﻿@model LModels.ExModel.EX_Subject
+@{
+    Layout = null;
+}
+
+
+<div class="form-group">
+    <label>Subject Name</label>
+    <input value="@Model.SubjectName" id="SubjectNameEdit" name="SubjectNameEdit" type="text" class="form-control form-control-lg" aria-label="TimeTo">
+    <input hidden value="@Model.SubjectID" id="SubjectID" name="SubjectNameEdit" type="text" class="form-control form-control-lg" aria-label="TimeTo">
+</div>
+<div class="form-group">
+    <label>Qty Lesson</label>
+    <input onchange="RenderRowContainer('TableContainerEdit')" name="QtyContainerEdit" id="QtyContainerEdit" type="number" class="form-control" value="0" min="0">
+</div>
+
+<div class="row justify-content-center">
+    <h4 style="font-weight:bolder" class="card-title">List Lesson</h4>
+    <table class="table table-hover" style="width: 60%; margin: auto;">
+        <thead style="font-weight: bolder;">
+            <tr>
+                <td hidden></td>
+                <td width="10%">No#:</td>
+                <td width="30%">Lesson Number</td>
+                <td width="50%">Lesson Name</td>
+                <td>Action</td>
+            </tr>
+        </thead>
+        <tbody id="TableContainerEdit">
+            <!-- Rows will be added here dynamically -->
+            @{
+                var No = 1;
+                foreach(var item in Model.Lessons)
+                {
+                    
+                    <tr>
+                        <td hidden>
+                            <input value="@item.LessonID" type="number" class="form-control" name="LessionName" required="">
+                        </td>
+                        <td class="stt" style="font-weight: 700;">@No</td>
+                        <td>
+                            <input value="@item.LessonNumber" type="text" class="form-control" name="LessionNumber" required="">
+                        </td>
+                        <td>
+                            <input value="@item.LessonName" type="text" class="form-control" name="LessionName" required="">
+                        </td>
+                       
+
+                        <td>
+                            <button onclick="removeRowV2(this)" class="btn btn-danger mr-2">-</button>
+                        </td>
+
+                    </tr>
+                    No++;
+                }
+            }
+        </tbody>
+    </table>
+</div>

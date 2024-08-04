@@ -1,0 +1,42 @@
+﻿@using LModels
+@model IEnumerable<Role>
+
+<div class="row">
+	<h4 class="card-title">Role List</h4>
+	<div class="text-end">
+		<a class="btn btn-secondary" asp-action="Create" asp-area="Admin">
+			<i class="bi bi-plus-circle"></i>
+			Create a new Role
+		</a>
+	</div>
+
+	<table class="table table-striped">
+		<thead>
+			<tr>
+				<th>ID </th>
+				<th>Role Name </th>
+				<th>Role Code </th>
+				<th>Actions </th>
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<td class="py-1">@item.RoleId</td>
+					<td>@item.RoleName</td>
+					<td>@item.RoleCode</td>
+					<td>
+						<a class="btn btn-warning" asp-area="Admin" asp-route-id="@item.RoleId" asp-action="Update">
+							<i class="bi bi-pencil-fill"></i>
+						</a>
+						<a class="btn btn-danger" asp-area="Admin" asp-route-id="@item.RoleId" asp-action="Delete">
+							<i class="bi bi-trash3"></i>
+						</a>
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+</div>
+

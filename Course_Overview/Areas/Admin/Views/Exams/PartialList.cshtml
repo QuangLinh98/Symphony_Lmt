@@ -1,0 +1,84 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<LModels.ExModel.EX_Exam>
+@{
+    // var listLession = ViewBag.listLession as List<LModels.ExModel.EX_Lesson>;
+    // var listLessionSelect = ViewBag.listLessionSelect as List<LModels.ExModel.EX_Lesson>;
+    // var questions = ViewBag.questions as List<LModels.ExModel.EX_Question>;
+}
+<input hidden id="Page" value="@Model.PageNumber" />
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-1">
+                    <button onclick="RenderModalAdd()" type="button" class="btn btn-success ">Add New</button>
+                    <input hidden id="ExamsNameEdit" value="" />
+                    <input hidden id="ExamDateEdit" value="" />
+                    <input hidden id="ExamID" value="" />
+                    <input hidden id="TotalMinsEdit" value="" />
+                </div>
+                <div class="col-1">
+                    <button style="display:none" id="ButtonSave" onclick="SaveEdit()" type="button" class="btn btn-primary ">Save</button>
+                </div>
+            </div>
+            <div class="row" style="height:50px">
+            </div>
+            <h4 style="font-weight:bolder" class="card-title">List Question</h4>
+    
+
+            <p class="card-description" style="height:30px"></p>
+            <table class="table">
+                <thead style="font-weight:bolder">
+                    <tr>
+                        <td>No #:</td>
+                        <td>ExamName</td>
+                        <td>ExamDate</td>
+                        <td>TotalMins</td>
+                        <td>TimeEnd</td>
+                        <td>Status</td>
+                        <td>Acion</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var No = 1;
+                        @foreach (var item in Model)
+                        {
+                            <tr id="row-@item.ExamID">
+                                <td>@No</td>
+                                <td><input name="ExamsName" value="@item.ExamName" type="text" class="form-control editable" disabled data-id="@item.ExamID"> </td>
+                                <td> <input name="ExamDate" value="@item.ExamDate.ToString("yyyy-MM-ddTHH:mm")" type="datetime-local" class="form-control editable" disabled data-id="@item.ExamID"></td>
+                                <td><input name="TotalMins" value="@item.TotalMins" type="number" class="form-control editable" min="15" disabled data-id="@item.ExamID"></td>
+                                <td>@item.TimeEnd</td>
+                                <td>@item.Status</td>
+                                <td>
+                                    <button onclick="ViewAndEdit(@item.ExamID)" type="button" class="btn btn-info">ViewAndEdit</button>
+                                    <button onclick="Cancel(@item.ExamID)" type="button" class="btn btn-info">Cancel</button>
+                                    <button onclick="ForClass(@item.ExamID)" type="button" class="btn btn-success">For Class</button>
+                                    <button onclick="Edit(@item.ExamID)" type="button" class="btn btn-warning">EditInfo</button>
+                                    <button style="display:none" id="ButtonSave_@item.ExamID" onclick="SaveEdit(@item.ExamID)" type="button" class="btn btn-primary">Save</button>
+                                    <button   onclick="Run(@item.ExamID)" type="button" class="btn btn-danger">Run</button>
+                                </td>
+                            </tr>
+                        }
+
+                    }
+                   
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="dataTables_paginate paging_bootstrap_full_number pull-right" id="sample_1_paginate">
+    @Html.PagedListPager(Model, pageNumber => Url.Action("PartialList", new { page = pageNumber }),
+            new PagedListRenderOptions
+    {
+        Display = PagedListDisplayMode.IfNeeded,
+        DisplayItemSliceAndTotal = true,
+        UlElementClasses = new[] { "pagination" },
+        LiElementClasses = new[] { "page-item" },
+        PageClasses = new[] { "page-link" }
+    })
+</div>

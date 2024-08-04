@@ -1,0 +1,64 @@
+﻿@using LModels.ViewModels
+@model HomeIndexViewModel
+
+@if (Model.Courses == null || !Model.Courses.Any())
+{
+	<div class="alert alert-warning" role="alert">
+		No categories available.
+	</div>
+}
+else
+{
+	<div class="container-xxl py-5 category">
+		<div class="container">
+			<div class="text-center wow fadeInUp" data-wow-delay="0.1s">
+				<h6 class="section-title bg-white text-center text-primary px-3">Categories</h6>
+				<h1 class="mb-5">Courses Categories</h1>
+			</div>
+			<div class="row g-3">
+				<div class="col-lg-6 col-md-6">
+					<div class="row g-3">
+						@foreach (var item in Model.Courses.Take(1))
+						{
+							<div class="col-lg-12 col-md-12 wow zoomIn" data-wow-delay="0.1s">
+								<a class="position-relative d-block overflow-hidden" asp-action="CourseDetail" asp-controller="Course" asp-route-id="@item.CourseID">
+									<img class="img-fluid" src="~/@item.ImagePath" alt="@item.CourseName">
+									<div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
+										<h5 class="m-0">@item.CourseName</h5>
+										@* <small class="text-primary">49 Courses</small> *@
+									</div>
+								</a>
+							</div>
+						}
+
+						@foreach (var item in Model.Courses.Skip(1).Take(2))
+						{
+							<div class="col-lg-6 col-md-12 wow zoomIn" data-wow-delay="0.3s">
+								<a class="position-relative d-block overflow-hidden" asp-action="CourseDetail" asp-controller="Course" asp-route-id="@item.CourseID">
+									<img class="img-fluid" src="~/@item.ImagePath" alt="@item.CourseName">
+									<div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
+										<h5 class="m-0">@item.CourseName</h5>
+										@* <small class="text-primary">49 Courses</small> *@
+									</div>
+								</a>
+							</div>
+						}
+					</div>
+				</div>
+				<div class="col-lg-6 col-md-6 wow zoomIn" data-wow-delay="0.7s" style="min-height: 300px;">
+					@if (Model.Courses.Skip(3).Any())
+					{
+						var category = Model.Courses.Skip(3).First();
+						<a class="position-relative d-block h-100 overflow-hidden" asp-action="CourseDetail" asp-controller="Course" asp-route-id="@category.CourseID">
+							<img class="img-fluid position-absolute w-100 h-100" src="~/@category.ImagePath" alt="@category.CourseName" style="object-fit: cover;">
+							<div class="bg-white text-center position-absolute bottom-0 end-0 py-2 px-3" style="margin: 1px;">
+								<h5 class="m-0">@category.CourseName</h5>
+								@* <small class="text-primary">49 Courses</small> *@
+							</div>
+						</a>
+					}
+				</div>
+			</div>
+		</div>
+	</div>
+}

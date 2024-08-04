@@ -1,0 +1,144 @@
+﻿@using X.PagedList
+@using X.PagedList.Mvc.Core
+@model X.PagedList.IPagedList<LModels.ExModel.EX_Question>
+@{
+    var listLession = ViewBag.listLession as List<LModels.ExModel.EX_Lesson>;
+    var listLessionSelect = ViewBag.listLessionSelect as List<LModels.ExModel.EX_Lesson>;
+    var questions = ViewBag.questions as List<LModels.ExModel.EX_Question>;
+}
+<input hidden id="Page" value="@Model.PageNumber" />
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-1">
+                    <div class="form-group row">
+                        <button onclick="RenderModalAdd()" type="button" class="btn btn-success  btn-fw"> +</button>
+                    </div>
+                </div>
+            </div>
+            <h4 style="font-weight:bolder" class="card-title">List Question</h4>
+            <p class="card-description" style="height:30px"></p>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="form-group row">
+                        <label class="col-sm-5 col-form-label">Lession Name:</label>
+                        <div class="col-sm-7">
+                            <select onchange="filter(1)" name="LessonID" id="LessonID" class="form-select" aria-label="Default select example">
+                                @if (listLession != null && listLession.Any() && listLessionSelect == null)
+                                {
+                                    var isFirstEnd = true;
+                                    <option value="-1" selected>All </option>
+                                    foreach (var item in listLession)
+                                    {
+                                        <option value="@item.LessonID">@item.LessonNumber | @item.LessonName </option>
+                                    }
+                                }
+                                else if (listLessionSelect != null)
+                                {
+
+                                    foreach (var item in listLessionSelect)
+                                    {
+                                        <option selected value="@item.LessonID">@item.LessonNumber | @item.LessonName </option>
+                                    }
+                                    <option value="-1">All </option>
+                                }
+                                else
+                                {
+                                    <option value="" disabled>No data available</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <table class="table">
+                <thead style="font-weight:bolder">
+                    <tr>
+                        <td>No #:</td>
+                        <td>Lession Name</td>
+                        <td>AnswerText</td>
+                        <td>Action</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        var Lession = questions.Where(x => x.LessonID == item.LessonID).FirstOrDefault();
+
+                        <tr>
+
+                            <td>@item.QuestionID</td>
+                            <td> @Lession.Lesson.LessonName </td>
+                            <td> <input onblur="ChangeQuestionText(@item.QuestionID, this)" id="Question_@item.QuestionID" type="text" value="@item.QuestionText" class="form-control" disabled></td>
+                            <td>
+                                <button onclick="RenderEditLessonName(@item.QuestionID)" type="button" class="btn btn-info">Edit</button>
+                                <button onclick="DeleteQuestion(@item.QuestionID)" type="button" class="btn btn-danger">Delete</button>
+                            </td>
+
+
+                        </tr>
+                        <tr>
+                            <td colspan="3">
+                                <table class="table">
+                                    <thead style="font-weight:bolder">
+                                        <tr>
+
+                                            <th>Answer</th>
+                                            <th width="10%">Correct answer</th>
+                                            <th width="10%">Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            foreach (var item2 in item.Answers)
+                                            {
+                                                <tr style="@(item2.IsCorrect ? "background-color:aquamarine" : "")">
+                                                    <td>
+                                                        <input onblur="ChangeAnswerText(@item2.AnswerID, this)" id="answerText_@item2.AnswerID" type="text" value="@item2.AnswerText" class="form-control" disabled>
+                                                    </td>
+                                                    <td>
+                                                        <input onclick="ChangeIsCorrect(@item2.AnswerID)" class="form-check-input" type="checkbox" name="correctAnswer" @(item2.IsCorrect ? "checked" : "") />
+                                                    </td>
+                                                    <td>
+                                                        <button onclick="RenderModaledit(@item2.AnswerID)" type="button" class="btn btn-warning">Edit</button>
+                                                        <button onclick="DeleteAnswer(@item2.AnswerID)" class="btn btn-outline-danger" type="button">Delete</button>
+                                                    </td>
+                                                </tr>
+                                            }
+                                            <tr>
+                                                <td colspan="3">
+                                                    <div class="input-group mb-3">
+                                                        <input id="username-input-@item.QuestionID" type="text" class="form-control" placeholder="Answer....." aria-label="Recipient's username" aria-describedby="basic-addon2">
+                                                        <div class="input-group-append">
+                                                            <button onclick="AddAnswer(@item.QuestionID)" class="btn btn-outline-success" type="button">Add</button>
+
+                                                        </div>
+                                                    </div>
+
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div class="dataTables_paginate paging_bootstrap_full_number pull-right" id="sample_1_paginate">
+    @Html.PagedListPager(Model, pageNumber => Url.Action("PartialList", new { page = pageNumber }),
+            new PagedListRenderOptions
+    {
+        Display = PagedListDisplayMode.IfNeeded,
+        DisplayItemSliceAndTotal = true,
+        UlElementClasses = new[] { "pagination" },
+        LiElementClasses = new[] { "page-item" },
+        PageClasses = new[] { "page-link" }
+    })
+</div>
+

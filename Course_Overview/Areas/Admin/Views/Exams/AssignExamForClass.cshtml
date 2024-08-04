@@ -1,0 +1,142 @@
+﻿@using LModels
+
+@{
+    // ViewBag._ClassExams = _ClassExams;
+    // ViewBag._Classes = _Classes;
+    // ViewBag.EX_Exams = EX_Exams;
+
+    var _ClassExams = ViewBag._ClassExams as List<LModels.ExModel.ClassExam>;
+    var _Classes = ViewBag._Classes as List<LModels.Class>;
+    var EX_Exams = ViewBag.EX_Exams as LModels.ExModel.EX_Exam;
+
+}
+
+
+
+<input hidden id="ExamID" value="@EX_Exams.ExamID" />
+<div class="content-wrapper">
+    <div class="container-flug">
+
+        <div id="AddNew" class="tabcontent col-12 grid-margin">
+            <div class="card">
+                
+                <div class="card-body" id="Title">
+                    <h4>Exam: @EX_Exams.ExamName</h4>
+                    <button onclick="goBack()" style="background: linear-gradient(to right, #da8cff, #9a55ff); color:white; margin-bottom: 20px;" class="btn btn-gradient-primary mr-2">Back</button>
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Class Name:</label>
+                                <div class="col-sm-7" style="font-weight:bolder">
+                                    <input name="ClassName" id="ClassName" type="text" class="form-control">
+                                    <button onclick="filter()" style="background: linear-gradient(to right, #da8cff, #9a55ff); color:white; position:relative;top:30px" type="button" class="btn btn-gradient-primary mr-2">Search</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="height:100px">
+                        
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12" id="ListClass">
+                           
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Question</h5>
+                <button onclick="Close()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="ModalAdd">
+            </div>
+            <div class="modal-footer">
+                <button onclick="AddSubject()" type="button" class="btn btn-primary">Approve</button>
+                <button onclick="Close()" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModalEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Subject</h5>
+                <button onclick="Close()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="ModalEdit">
+            </div>
+            <div class="modal-footer">
+                <button onclick="Edit()" type="button" class="btn btn-primary">Approve</button>
+                <button onclick="Close()" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @*Đoạn mã hiển thị thông báo alert*@
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/AdminLayout/assets/js/Notification.js"></script>
+    <script src="~/AdminLayout/assets/js/Class.js"></script>
+
+    <script>
+        function goBack() {
+            window.history.back();
+        }
+        $(document).ready(function () {
+            filter();
+        });
+        function filter() {
+            var ExamId = @EX_Exams.ExamID;
+            var ClassName = $("#ClassName").val()
+            var _url = '@Url.Action("ListClass")';
+            $.ajax({
+                url: _url,
+                data: { ExamId: ExamId, ClassName: ClassName },
+                method: 'POST',
+                dataType: 'html',
+                success: function (data) {
+                    $('#ListClass').html(data);
+                    /* removeAllRows()*/
+
+                }
+            });
+        }
+        function changeStatus(ExamID, ClassID) {
+            var _url = '@Url.Action("changeStatus")';
+            $.ajax({
+                url: _url,
+                data: { ExamID: ExamID, ClassID: ClassID },
+                method: 'POST',
+                success: function (data) {
+                    if (data.success === true) {
+                        alert("Success");
+                        filter()
+                    } else {
+                        alert("Fail");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX error:', status, error);
+                }
+            });
+        }
+    </script>
+
+}

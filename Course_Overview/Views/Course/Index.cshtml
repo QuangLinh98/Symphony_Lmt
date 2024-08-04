@@ -1,0 +1,116 @@
+﻿@model IEnumerable<LModels.Course>
+
+<div class="container">
+	<div class="row mb-4">
+		<div class="col-12 text-center mt-5">
+			<h6 class="section-title bg-white text-center text-primary px-3">Available Courses</h6>
+		</div>
+	</div>
+	<div class="row mb-4">
+		<div class="col-12 d-flex justify-content-end input-group ">
+			<form class="input-group d-flex justify-content-end" method="get" action="@Url.Action("Index", "Course")">
+				<div class="form-outline" data-mdb-input-init>
+					<input type="search" name="searchQuery" id="form1" class="form-control" placeholder="Search..." />					
+				</div>
+				<button type="submit" class="btn btn-primary" data-mdb-ripple-init>
+					<i class="fas fa-search"></i>
+				</button>
+			</form>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col-lg-3 col-md-4 col-sm-12 mb-4">
+			<div class="card">
+				<div class="card-body">
+					<h5 class="card-title">ALL PROGRAM</h5>
+					<form method="get" action="@Url.Action("Index", "Course")">
+						<div class="form-group mb-3">
+							<label for="duration">Course Duration</label>
+							<select class="form-control" id="duration" name="duration" onchange="this.form.submit()">
+								<option value="">All Duration</option>
+								<option value="4">4 month</option>
+								<option value="6">6 month</option>
+							</select>
+						</div>
+						<div class="form-group mb-3">
+							<label for="fee">Fee</label>
+							<select class="form-control" id="fee" name="fee" onchange="this.form.submit()">
+								<option value="">All Prices</option>
+								<option value="4275">$4275</option>
+								<option value="6000">$6000</option>
+							</select>
+						</div>
+						<div class="form-group mb-3">
+							<label for="level">Level</label>
+							<select class="form-control" id="level" name="level" onchange="this.form.submit()">
+								<option value="">All Levels</option>
+								<option value="Basic">Basic</option>
+								<option value="Advanced">Advanced</option>
+							</select>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-9">
+			<div class="row d-flex justify-content-center">
+				@foreach (var course in Model)
+				{
+
+					<div class="col-lg-3 col-md-4 col-sm-6 mb-4" data-duration="@course.Duration" data-fee="@course.Fee" data-level="@course.Level">
+						<a asp-action="CourseDetail" asp-controller="Course" asp-route-id="@course.CourseID">
+							<div class="card h-100" style="border-radius: 10px; margin: 5px;">
+								<img src="~/@course.ImagePath" class="card-img-top" style="height: 350px; object-fit: cover; border-radius: 10px;" alt="@course.CourseName">
+								<div class="card-img-overlay d-flex flex-column justify-content-end">
+									<h5 class="card-title text-white">@course.CourseName</h5>
+									<p class="card-text text-white">
+										<i class="fas fa-star"></i>
+										<i class="fas fa-star"></i>
+										<i class="fas fa-star"></i>
+										<i class="fas fa-star"></i>
+										<i class="fas fa-star"></i>
+
+									</p>
+									<p class="card-text text-white">Duration: @course.Duration months</p>
+									<p class="card-text text-white">Level: @course.Level </p>
+								</div>
+							</div>
+						</a>
+					</div>
+				}
+			</div>
+		</div>
+	</div>
+</div>
+
+@*
+@section scripts {
+    <script>
+        function filterCourses() {
+            const selectedDuration = document.getElementById('duration').value;
+            const selectedFee = document.getElementById('fee').value;
+            const selectedLevel = document.getElementById('level').value;
+
+            const courses = document.querySelectorAll('.course-item');
+
+            courses.forEach(course => {
+                const courseDuration = course.getAttribute('data-duration');
+                const courseFee = course.getAttribute('data-fee');
+                const courseLevel = course.getAttribute('data-level');
+
+                // Apply filtering logic
+                const durationMatch = !selectedDuration || courseDuration === selectedDuration;
+                const feeMatch = !selectedFee || courseFee === selectedFee;
+                const levelMatch = !selectedLevel || courseLevel === selectedLevel;
+
+                // Show or hide course based on matches
+                if (durationMatch && feeMatch && levelMatch) {
+                    course.style.display = '';
+                } else {
+                    course.style.display = 'none';
+                }
+            });
+        }
+    </script>
+} *@

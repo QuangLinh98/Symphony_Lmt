@@ -1,0 +1,222 @@
+﻿@model IEnumerable<LModels.ExModel.ClassStudent>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Student List</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .pagination {
+            margin-top: 20px;
+        }
+
+            .pagination .page-item.disabled .page-link {
+                pointer-events: none;
+            }
+        /* Thêm CSS để căn chỉnh footer */
+        .footer {
+            background-color: #f8f9fa;
+            padding: 10px;
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+   
+        <div class="form-group">
+            <label for="searchTerm">Search:</label>
+            <input type="text" id="searchTerm" class="form-control" placeholder="Enter search term" />
+        </div>
+        <div class="form-group">
+            <label for="feeStatusFilter">Tuition Fee Status:</label>
+            <select id="feeStatusFilter" class="form-control">
+                <option value="">All</option>
+                <option value="Paymented">Paymented</option>
+                <option value="Not paymented">Not paymented</option>
+            </select>
+        </div>
+
+        <form id="deleteForm" method="post" action="/Admin/StudentClass/DeleteSelected">
+            <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete Selected</button>
+            <table class="table table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th></th> <!-- Cột cho checkbox -->
+                        <th>Student Name</th>
+                        <th>Student Email</th>
+                        <th>Student Phone</th>
+                        <th>Student Address</th>
+                        <th>Student Code</th>
+                        <th>Class Name</th>
+                        <th>
+                            <a href="#" onclick="sortTable('Fee')">Class Fee</a>
+                        </th>
+                        <th>
+                            <a href="#" onclick="sortTable('Status')">Tuition Fee Status</a>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="studentTableBody">
+                    @foreach (var item in Model)
+                    {
+                        <tr data-status="@(item.Status.HasValue ? (item.Status.Value ? "Paymented" : "Not paymented") : "Unknown")"
+                            data-fee="@(item.Class?.Fee ?? 0)">
+                            <td>
+                                <input type="checkbox" name="selectedStudents" value="@item.Student?.StudentID" />
+                            </td>
+                            <td>@item.Student?.Name</td>
+                            <td>@item.Student?.Email</td>
+                            <td>@item.Student?.Phone</td>
+                        <td>@item.Student?.Address</td>
+                        <td>@item.Student?.IdentityCard</td>
+                        <td>@item.Class?.ClassName</td>
+                        <td>
+                            @if (item.Class?.Fee != 0.00m)
+                            {
+                                @item.Class?.Fee
+                            }
+                            else
+                            {
+                                <span>Not Applicable</span>
+                            }
+                        </td>
+                        <td>
+                            @(item.Status.HasValue ? (item.Status.Value ? "Paymented" : "Not paymented") : "Unknown")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+
+    </form>
+
+    <nav aria-label="Page navigation">
+        <ul id="pagination" class="pagination"></ul>
+    </nav>
+
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const itemsPerPage = 10;
+            let currentPage = 1;
+            const searchInput = document.getElementById('searchTerm');
+            const feeStatusFilter = document.getElementById('feeStatusFilter');
+            const tableBody = document.getElementById('studentTableBody');
+            const paginationDiv = document.getElementById('pagination');
+            const allRows = Array.from(tableBody.querySelectorAll('tr'));
+
+            function renderTable() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedStatus = feeStatusFilter.value;
+
+                let filteredRows = allRows.filter(row => {
+                    const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                    const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                    const phone = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
+                    const address = row.querySelector('td:nth-child(5)').textContent.toLowerCase();
+                    const status = row.getAttribute('data-status');
+
+                    const matchesSearch = name.includes(searchTerm) || email.includes(searchTerm) || phone.includes(searchTerm) || address.includes(searchTerm);
+                    const matchesStatus = selectedStatus === "" || status === selectedStatus;
+
+                    return matchesSearch && matchesStatus;
+                });
+
+                const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
+                const start = (currentPage - 1) * itemsPerPage;
+                const end = start + itemsPerPage;
+                const paginatedRows = filteredRows.slice(start, end);
+
+                tableBody.innerHTML = '';
+                paginatedRows.forEach(row => tableBody.appendChild(row));
+
+                renderPagination(totalPages);
+            }
+
+            function renderPagination(totalPages) {
+                paginationDiv.innerHTML = '';
+
+                if (totalPages > 1) {
+                    const prevButton = document.createElement('li');
+                    prevButton.className = 'page-item ' + (currentPage === 1 ? 'disabled' : '');
+                    prevButton.innerHTML = '<a class="page-link" href="#" onclick="changePage(' + (currentPage - 1) + ')">Previous</a>';
+                    paginationDiv.appendChild(prevButton);
+
+                    for (let i = 1; i <= totalPages; i++) {
+                        const pageButton = document.createElement('li');
+                        pageButton.className = 'page-item ' + (currentPage === i ? 'active' : '');
+                        pageButton.innerHTML = '<a class="page-link" href="#" onclick="changePage(' + i + ')">' + i + '</a>';
+                        paginationDiv.appendChild(pageButton);
+                    }
+
+                    const nextButton = document.createElement('li');
+                    nextButton.className = 'page-item ' + (currentPage === totalPages ? 'disabled' : '');
+                    nextButton.innerHTML = '<a class="page-link" href="#" onclick="changePage(' + (currentPage + 1) + ')">Next</a>';
+                    paginationDiv.appendChild(nextButton);
+                }
+            }
+
+            function changePage(page) {
+                if (page >= 1 && page <= Math.ceil(allRows.length / itemsPerPage)) {
+                    currentPage = page;
+                    renderTable();
+                }
+            }
+
+            function sortTable(column) {
+                const rows = Array.from(tableBody.querySelectorAll('tr'));
+                const sortedRows = rows.sort((a, b) => {
+                    const aValue = column === 'Fee' ? parseFloat(a.getAttribute('data-fee')) : a.getAttribute('data-status');
+                    const bValue = column === 'Fee' ? parseFloat(b.getAttribute('data-fee')) : b.getAttribute('data-status');
+
+                    return aValue > bValue ? 1 : -1;
+                });
+
+                tableBody.innerHTML = '';
+                sortedRows.forEach(row => tableBody.appendChild(row));
+
+                renderTable();
+            }
+
+            function confirmDelete() {
+                const selected = document.querySelectorAll('input[name="selectedStudents"]:checked');
+                if (selected.length === 0) {
+                    alert('Please select at least one student to delete.');
+                    return;
+                }
+
+                if (confirm('Are you sure you want to delete the selected students?')) {
+                    document.getElementById('deleteForm').submit();
+                }
+            }
+
+            searchInput.addEventListener('input', renderTable);
+            feeStatusFilter.addEventListener('change', renderTable);
+            renderTable();
+        });
+
+        function changePage(page) {
+            const event = new Event('changePage');
+            event.page = page;
+            document.dispatchEvent(event);
+        }
+
+        function sortTable(column) {
+            const event = new Event('sortTable');
+            event.column = column;
+            document.dispatchEvent(event);
+        }
+
+        function confirmDelete() {
+            const event = new Event('confirmDelete');
+            document.dispatchEvent(event);
+        }
+    </script>
+</body>
+</html>

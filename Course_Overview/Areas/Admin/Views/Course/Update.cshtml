@@ -1,0 +1,82 @@
+﻿@using LModels
+@model Course
+
+
+<div class="card shadow boder-0 mt-4">
+	<div class="card-body p-4">
+		<h2>Update course</h2>
+		<form class="bg-gray" asp-action="Update" enctype="multipart/form-data">
+			<input type="hidden" asp-for="CourseID">
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="name">Course Name:</label>
+				<input type="text" class="form-control"
+					   placeholder="Enter course name" asp-for="CourseName" required>
+			</div>
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="Duration">Duration:</label>
+				<input type="number" class="form-control"
+					   placeholder="Enter Duration" asp-for="Duration" required>
+			</div>
+
+			<div class="mb-3">
+				<label for="level" class="form-label">Level</label>
+				<select id="level" class="form-select" name="Level" required>
+					<option value="">Select a level</option>
+					<option value="Basic">Basic</option>
+					<option value="Advanced">Advanced</option>
+				</select>
+			</div>
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="Fee">Fee:</label>
+				<input type="number" class="form-control"
+					   placeholder="Enter Fee" asp-for="Fee" required>
+			</div>
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="EntryRequirements">EntryRequirements:</label>
+				<textarea type="text" class="form-control"
+						  placeholder="Enter EntryRequirements" asp-for="EntryRequirements" required></textarea>
+			</div>
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="StudyMaterials">StudyMaterials:</label>
+				<textarea type="text" class="form-control"
+						  placeholder="Enter StudyMaterials" asp-for="StudyMaterials" required></textarea>
+			</div>
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="LabFacilities">LabFacilities:</label>
+				<textarea type="text" class="form-control"
+						  placeholder="Enter LabFacilities" asp-for="LabFacilities" required></textarea>
+			</div>
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="Description">Description:</label>
+				<textarea type="text" class="form-control"
+						  placeholder="Enter Description" asp-for="Description" required></textarea>
+			</div>
+
+			<div class="mb-3 mt-3">
+				<label for="image">Image:</label>
+				<input type="file" class="form-control"
+					   placeholder="Enter ImagePath" name="ImageFile">
+			</div>
+
+			<div class="mb-3 mt-3">
+				<label for="image">Current  Image:</label>
+				<input type="hidden" asp-for="ImagePath" name="ImagePath">
+				<img src="~/@Model.ImagePath" width="100" class="img-thumbnail" />
+			</div>
+
+			<button type="submit" class="btn btn-secondary" asp-action="Index">Back</button>
+			<button type="submit" class="btn btn-secondary">Submit</button>
+		</form>
+	</div>
+</div>
+@section scripts {
+	<script>CKEDITOR.replace("Description")</script>
+
+}

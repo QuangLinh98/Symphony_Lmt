@@ -1,0 +1,49 @@
+﻿@model IEnumerable<LModels.Schedule>
+
+@{
+    ViewData["Title"] = "Schedule Index";
+}
+
+<h2>Schedules</h2>
+<div class="text-end">  
+    <a asp-action="Create"  class="btn btn-secondary">
+        <i class="bi bi-plus-circle"></i>Create New Schedule
+    </a>
+</div>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Topic</th>
+            <th>Class</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th>Recurring Days</th>
+            <th>Room</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Course?.CourseName</td>
+                <td>@item.Class?.ClassName</td>
+                <td>@item.StartDate</td>
+                <td>@item.EndDate</td>
+                <td>@item.StartTime.ToString("hh:mm tt")</td>
+                <td>@item.EndTime.ToString("hh:mm tt")</td>
+                <td>@item.RecurringDays</td>
+                <td>@item.Room</td>
+                <td>
+                    <a asp-action="Update" asp-route-id="@item.ScheduleID" class="btn btn-primary btn-sm"><i class="bi bi-pencil-fill"></i></a> 
+                    <a asp-action="Details" asp-route-id="@item.ScheduleID" class="btn btn-info btn-sm"><i class="bi bi-plus-square"></i></a> 
+                    <a asp-action="Delete" asp-route-id="@item.ScheduleID" class="btn btn-danger btn-sm"><i class="bi bi-trash3"></i></a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+

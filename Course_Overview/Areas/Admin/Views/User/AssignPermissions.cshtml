@@ -1,0 +1,41 @@
+﻿@model Course_Overview.Areas.Admin.Viewmodels.PermissionAssignmentViewModel
+
+<h2>Assign Permissions for @Model.UserName</h2>
+@*Show temptData Success*@
+@{
+    var assignSuccess = TempData["AssignSuccess"] as string;
+}
+
+@if (!string.IsNullOrEmpty(assignSuccess))
+{
+    <div class="alert alert-success" role="alert">
+        @assignSuccess
+    </div>
+}
+<form asp-action="AssignPermissions" method="post">
+    <input type="hidden" asp-for="UserId" />
+
+    <table>
+        <thead>
+            <tr>
+                <th>Permission</th>
+                <th>Assign</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var permission in Model.RolePermissions)
+            {
+                <tr>
+                    <td>@permission.Permission.PermissionName</td>
+                    <td>
+                        <input type="checkbox" name="GrantedPermissions"
+                               value="@permission.PermissionId"
+                        @(Model.GrantedPermissions.Contains(permission.PermissionId) ? "checked" : "") />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>

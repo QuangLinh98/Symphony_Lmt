@@ -1,0 +1,64 @@
+﻿@using LModels
+@model List<LModels.ExModel.EX_Subject>
+@{
+    Layout = null;
+    // ViewBag._Exams = _Exams;
+    // ViewBag._ExamQuestions = _ExamQuestions;
+    // ViewBag._Subject = _Subject;
+    // ViewBag._Lession = _Lession;
+    var Exams = ViewBag._Exams as LModels.ExModel.EX_Exam;
+    var ExamQuestions = ViewBag._ExamQuestions as List<LModels.ExModel.EX_ExamQuestion>;
+    var Subject = ViewBag._Subject as LModels.ExModel.EX_Subject;
+    var Lession = ViewBag._Lession as List<LModels.ExModel.EX_Lesson>;
+}
+
+
+
+
+
+
+
+<h4>Questions in the Test</h4>
+
+<div class="row">
+    <div class="col-md-12">
+        <table class="table">
+            @{
+                var No = 1;
+                foreach (var item in ExamQuestions)
+                {
+                    <tr style="font-weight:bolder">
+                        <td width="10%">Câu: @No</td>
+                        <td>@item.Question.QuestionText</td>
+                        <td> <button onclick="DeleteExams(@item.ExamID, @item.QuestionID)" type="button" class="btn btn-danger">Delete</button></td>
+                       
+                       
+                       
+                    </tr>
+                    <tr>
+                        <td colspan="3">
+                            <table class="table">
+                                @foreach (var item2 in item.Question.Answers)
+                                {
+                                    <tr>
+                                        <td width="80%"> @item2.AnswerText</td>
+                                        <td> @item2.IsCorrect</td>
+                                    </tr>
+
+                                }
+                            </table>
+                        </td>
+                    </tr>
+                    No++;
+                }
+            }
+        </table>
+    </div>
+</div>
+
+
+</<script>
+      function goBack() {
+          window.history.back();
+      }
+</script>

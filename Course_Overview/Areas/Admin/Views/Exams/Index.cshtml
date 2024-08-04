@@ -1,0 +1,332 @@
+﻿@using LModels
+@model List<LModels.ExModel.EX_Subject>
+
+
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        padding: 0;
+        list-style: none;
+    }
+
+        .pagination li {
+            margin: 0 5px;
+        }
+
+        .pagination a, .pagination span {
+            display: block;
+            padding: 8px 16px;
+            text-decoration: none;
+            color: #007bff;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+
+            .pagination a:hover {
+                background-color: #e9ecef;
+            }
+
+        .pagination .active span {
+            background-color: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+
+        .pagination .disabled span {
+            color: #6c757d;
+            border-color: #dee2e6;
+            cursor: not-allowed;
+        }
+</style>
+
+
+<div class="content-wrapper">
+    <div class="container-flug">
+        @*   <div class="col-12 grid-margin">
+        <div class="card">
+        <div class="card-body">
+        <button id="AddNewTab" class="tablink btn btn-gradient-primary mr-2">AddNew</button>
+        </div>
+        </div>
+        </div> *@
+        <div id="AddNew" class="tabcontent col-12 grid-margin">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title" style="font-weight:bolder">Exams Managerment</h4>
+                    <p class="card-description" style="color: #76838f">
+                        Administer the Exam Session and the exams for that session
+                    </p>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Subject Name:</label>
+                                <div class="col-sm-7">
+                                    <select onchange="filter(1)" name="SubjectId" id="SubjectId" class="form-select" aria-label="Default select example">
+                                        <option value="" disabled selected>Select a subject</option>
+                                        @if (Model != null && Model.Any())
+                                        {
+                                            foreach (var item in Model)
+                                            {
+                                                <option value="@item.SubjectID">@item.SubjectName</option>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <option value="" disabled>No data available</option>
+                                        }
+                                    </select>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group row">
+                                <label class="col-sm-2 col-form-label">Exams Name:</label>
+                                <div class="col-sm-7" style="font-weight:bolder">
+                                    <input name="ExamsName" id="ExamsName" type="text" class="form-control">
+                                    <button onclick="filter(1, undefined)" style="background: linear-gradient(to right, #da8cff, #9a55ff); color:white; position:relative;top:30px" type="button" class="btn btn-gradient-primary mr-2">Search</button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body" id="ListExams">
+                  
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div id="myModal" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add Question</h5>
+                <button onclick="Close()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="ModalAdd">
+            </div>
+            <div class="modal-footer">
+                <button onclick="AddExams()" type="button" class="btn btn-primary">Approve</button>
+                <button onclick="Close()" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="myModalEdit" class="modal fade" role="dialog">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Subject</h5>
+                <button onclick="Close()" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body" id="ModalEdit">
+            </div>
+            <div class="modal-footer">
+                <button onclick="Edit()" type="button" class="btn btn-primary">Approve</button>
+                <button onclick="Close()" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    @*Đoạn mã hiển thị thông báo alert*@
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/AdminLayout/assets/js/Notification.js"></script>
+    <script src="~/AdminLayout/assets/js/Class.js"></script>
+
+
+    <script>
+        $(document).ready(function () {
+            $(document).on('click', '.page-link', function (event) {
+                event.preventDefault();
+                var page = $(this).attr('href').split('page=')[1];
+                console.log(page)
+                filter(page);
+            });
+            // Call the filter function here
+            filter(1);
+        });
+        function filter(page) {
+            if (page == undefined) {
+                page = $("#Page").val();
+            }
+            var SubjectId = $("#SubjectId").val();
+          
+            var _url = '@Url.Action("PartialList")';
+            var Model = {};
+            Model.SubjectId = SubjectId
+            Model.page = page
+            $.ajax({
+                url: _url,
+                data: Model,
+                method: 'POST',
+                dataType: 'html',
+                success: function (data) {
+                    $('#ListExams').html(data);
+                    /* removeAllRows()*/
+
+                }
+            });
+        }
+        function ViewAndEdit(Id) {
+            var _url = '@Url.Action("ViewAndEdit")' + "?ExamId=" + Id;
+            window.location.href = _url; // Sử dụng đúng tên biến _url
+        }
+
+        function RenderModalAdd() {
+            const SubjectId = parseInt($("#SubjectId").val(), 10);
+            console.log(SubjectId)
+            if (Number.isNaN(SubjectId)) {
+                alert("Vui Lòng Chọn Subject Trước Khi Add");
+                    return;
+            }
+
+
+            const _url = '@Url.Action("RenderModalAdd")';
+
+            $.ajax({
+                url: _url,
+                data: { SubjectId: SubjectId },
+                method: 'POST',
+                dataType: 'html',
+                success: function (data) {
+                    $('#ModalAdd').html(data);
+                    $('#myModal').modal('show');
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX error:', status, error);
+                }
+            });
+        }
+        function ShowAdd() {
+            $('#myModal').modal('show');
+        }
+        function Close() {
+            $('#myModal').modal('hide');
+            $('#myModalEdit').modal('hide');
+        }
+        function AddExams() {
+            var SubjectIdAdd = $("#SubjectIdAdd").val()
+            var ExamNameAdd = $("#ExamNameAdd").val()
+            var ExamDateAdd = $("#ExamDateAdd").val()
+            var TotalMinsAdd = $("#TotalMinsAdd").val()
+            const _url = '@Url.Action("AddExams")';
+            $.ajax({
+                url: _url,
+                data: { SubjectIdAdd: SubjectIdAdd, ExamNameAdd: ExamNameAdd, ExamDateAdd: ExamDateAdd, TotalMinsAdd: TotalMinsAdd },
+                method: 'POST',
+                success: function (data) {
+                    if (data.success === true) {
+                        alert("Success");
+                        filter(1)
+                    } else {
+                        alert("Fail");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX error:', status, error);
+                }
+            });
+        }
+        //Cancel
+
+        function Cancel(ExamId) {
+            const _url = '@Url.Action("Cancel")';
+            $.ajax({
+                url: _url,
+                data: { ExamId: ExamId },
+                method: 'POST',
+                success: function (data) {
+                    if (data.success === true) {
+                        alert("Success");
+                        filter(1)
+                    } else {
+                        alert("Fail");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX error:', status, error);
+                }
+            });
+        }
+        function ForClass(ExamId) {
+            var _url = '@Url.Action("AssignExamForClass")' + "?ExamId=" + ExamId;
+            window.location.href = _url; // Sử dụng đúng tên biến _url
+        }
+        function Edit(examID) {
+            // Vô hiệu hóa tất cả các input có class 'editable'
+            $(".editable").attr("disabled", true);
+
+            // Kích hoạt các input trong hàng có id tương ứng với examID
+            var row = $("#row-" + examID);
+            row.find(".editable").removeAttr("disabled");
+
+            // Lấy giá trị của ba input trong hàng
+            var examName = row.find("input[name='ExamsName']").val();
+            var examDate = row.find("input[name='ExamDate']").val();
+            var totalMins = row.find("input[name='TotalMins']").val();
+
+            $("#ButtonSave_" + examID).show()
+            // Hiển thị nút ButtonSave
+          
+        }
+        function SaveEdit(examID) {
+            var row = $("#row-" + examID);
+            var examName = row.find("input[name='ExamsName']").val();
+            var examDate = row.find("input[name='ExamDate']").val();
+            var totalMins = row.find("input[name='TotalMins']").val();
+            const _url = '@Url.Action("SaveEdit")';
+            $.ajax({
+                url: _url,
+                data: { ExamsNameEdit: examName, ExamDateEdit: examDate, TotalMinsEdit: totalMins, ExamID: examID },
+                method: 'POST',
+                success: function (data) {
+                    if (data.success === true) {
+                        alert("Success");
+                        filter(1)
+                    } else {
+                        alert("Fail");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX error:', status, error);
+                }
+            });
+
+        }
+        function Run(ExamID) {
+            const _url = '@Url.Action("Run")';
+            $.ajax({
+                url: _url,
+                data: { ExamID: ExamID },
+                method: 'POST',
+                success: function (data) {
+                    if (data.success === true) {
+                        alert("Success");
+                        filter(1)
+                    } else {
+                        alert(data.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('AJAX error:', status, error);
+                }
+            });
+        }
+
+    </script>
+}

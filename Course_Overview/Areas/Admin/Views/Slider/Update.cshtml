@@ -1,0 +1,39 @@
+﻿@using LModels.Client
+@model Slider
+
+<div class="card shadow boder-0 mt-4">
+	<div class="card-body p-4">
+		<h2>Update Slider</h2>
+		<form class="bg-gray" asp-action="Update" enctype="multipart/form-data">
+			<input type="hidden"  asp-for="SliderID">
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="title">Title:</label>
+				<input type="text" class="form-control"
+					   placeholder="Enter Title" asp-for="Title">
+				<span class="text-danger" asp-validation-for="Title"></span>
+			</div>
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="Description">Description:</label>
+				<textarea type="text" class="form-control"
+						  placeholder="Enter Description" asp-for="Description"></textarea>
+				<span class="text-danger" asp-validation-for="Description"></span>
+			</div>
+
+			<div class="mb-3 mt-3">
+				<label for="image">Image:</label>
+				<input type="file" class="form-control"
+					   placeholder="Enter ImagePath" name="ImageFile">
+			</div>
+
+			<div class="mb-3 mt-3">
+				<label for="image">Current  Image:</label>
+				<input type="hidden" asp-for="ImagePath" name="ImagePath">
+				<img src="~/@Model.ImagePath" width="100" class="img-thumbnail" />
+			</div>
+			<button type="submit" class="btn btn-secondary" asp-action="Index">Back</button>
+			<button type="submit" class="btn btn-secondary">Submit</button>
+		</form>
+	</div>
+</div>

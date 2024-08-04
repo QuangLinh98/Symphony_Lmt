@@ -1,0 +1,49 @@
+﻿@model LModels.ExModel.EX_Subject
+@{
+    Layout = null;
+    var Subject = ViewBag.Subject as LModels.ExModel.EX_Subject;
+    var Lession = ViewBag.Lession as LModels.ExModel.EX_Lesson;
+}
+@{
+    if (Lession == null)
+    {
+        <div class="form-group">
+            <h3>Môn Chưa Có lession vui lòng Add thêm vào ở giao diện quản lý môn học</h3>
+
+        </div>
+    }
+    else
+    {
+        <div class="form-group">
+            <h3>Thêm Câu Hỏi Cho Môn @Subject.SubjectName Bài  @Lession.LessonName</h3>
+            <label>Question Text</label>
+            <input id="QuestionTextAdd" name="QuestionTextAdd" type="text" class="form-control form-control-lg" aria-label="TimeTo">
+        </div>
+        <div class="form-group">
+
+            <label>Qty Answer</label>
+            <input onchange="RenderRowContainer('myModal')" name="QtyContainer" id="QtyContainer" type="number" class="form-control" value="0" min="0">
+            <input hidden name="SubjectIdAdd" id="SubjectIdAdd" type="number" class="form-control" value="@Subject.SubjectID">
+            <input hidden name="LessionIdAdd" id="LessionIdAdd" type="number" class="form-control" value="@Lession.LessonID">
+        </div>
+        <div class="row justify-content-center">
+            <h4 style="font-weight:bolder" class="card-title">List Lesson</h4>
+            <table class="table table-hover" style="width: 60%; margin: auto;">
+                <thead style="font-weight: bolder;">
+                    <tr>
+                        <td width="10%">No#:</td>
+                        <td width="80%">Answer</td>
+                        <td>Action</td>
+                    </tr>
+                </thead>
+                <tbody id="TableContainer">
+                    <!-- Rows will be added here dynamically -->
+                </tbody>
+            </table>
+        </div>
+
+    }
+}
+
+
+

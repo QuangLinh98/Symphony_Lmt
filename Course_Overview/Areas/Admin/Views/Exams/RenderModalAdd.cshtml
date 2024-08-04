@@ -1,0 +1,34 @@
+﻿@* @model LModels.ExModel.EX_Subject *@
+@{
+    Layout = null;
+    // var Subject = ViewBag.Subject as LModels.ExModel.EX_Subject;
+    // var Lession = ViewBag.Lession as LModels.ExModel.EX_Lesson;
+}
+
+<button onclick="goBack()" style="background: linear-gradient(to right, #da8cff, #9a55ff); color:white; margin-bottom: 20px;" class="btn btn-gradient-primary mr-2">Back</button>
+
+<div class="form-group">
+   @*  <h3>Thêm Câu Hỏi Cho Môn @Subject.SubjectName Bài  @Lession.LessonName</h3> *@
+    <label>Exam Name:</label>
+    <input hidden id="SubjectIdAdd" value="@ViewBag.SubjectId" />
+    <input id="ExamNameAdd" name="ExamNameAdd" type="text" class="form-control form-control-lg" aria-label="TimeTo">
+</div>
+<div class="form-group">
+    @*  <h3>Thêm Câu Hỏi Cho Môn @Subject.SubjectName Bài  @Lession.LessonName</h3> *@
+    <label>Exam Date:</label>
+    <input id="ExamDateAdd" name="ExamDateAdd" type="datetime-local" class="form-control form-control-lg" aria-label="TimeFrom">
+</div>
+<div class="form-group">
+   
+    <label>Total Mins</label>
+    <input name="TotalMinsAdd" id="TotalMinsAdd" type="number" class="form-control" value="0" min="10">
+   @*  <input hidden name="SubjectIdAdd" id="SubjectIdAdd" type="number" class="form-control" value="@Subject.SubjectID" >
+    <input hidden name="LessionIdAdd" id="LessionIdAdd" type="number" class="form-control" value="@Lession.LessonID" > *@
+</div>
+
+</<script>
+      function goBack() {
+          window.history.back();
+      }
+</script>
+

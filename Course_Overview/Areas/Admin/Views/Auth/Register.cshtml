@@ -1,0 +1,109 @@
+﻿@using LModels
+@model User
+<div class="container-scroller">
+	<div class="container-fluid page-body-wrapper full-page-wrapper">
+		<div class="content-wrapper d-flex align-items-center auth">
+			<div class="row flex-grow">
+				<div class="col-lg-6 mx-auto">
+					<div class="auth-form-light text-left p-5">
+						<div class="brand-logo">
+							<h5 class="m-0 text-primary text-center">
+								<i class="bi bi-book-half"></i>Symphony
+							</h5>
+						</div>
+						<h4>New here?</h4>
+						<h6 class="font-weight-light">Signing up is easy. It only takes a few steps</h6>
+						@*Show temptData Error*@
+						@{
+							var errorMessage = TempData["ErrorMessage"] as string;
+						}
+
+						@if (!string.IsNullOrEmpty(errorMessage))
+						{
+							<div class="alert alert-danger" role="alert">
+								@errorMessage
+							</div>
+						}
+						@*Show temptData Success*@
+						@{
+							var successMessage = TempData["SuccessMessage"] as string;
+						}
+
+						@if (!string.IsNullOrEmpty(successMessage))
+						{
+							<div class="alert alert-success" role="alert">
+								@successMessage
+							</div>
+						}
+						<form class="pt-3" asp-action="Register">
+							<div class="form-group">
+								<input type="text" class="form-control form-control-lg" name="Name" id="exampleInputUsername1" placeholder="Username" required>
+							</div>
+
+							<div class="form-group">
+								<input type="email" class="form-control form-control-lg" asp-for="Email" placeholder="Enter Email" required>
+							</div>
+
+							<div class="form-group">
+								<input type="password" class="form-control form-control-lg" i asp-for="Password" placeholder="Password" required>
+								<ul id="password-requirements">
+									<li id="length" class="invalid">At least 8 characters long</li>
+									<li id="uppercase" class="invalid">At least one uppercase letter</li>
+									<li id="lowercase" class="invalid">At least one lowercase letter</li>
+									<li id="number" class="invalid">At least one number</li>
+									<li id="special" class="invalid">At least one special character (#, $, etc.)</li>
+								</ul>
+							</div>
+
+							<div class="form-group">
+								<input type="text" class="form-control form-control-lg" asp-for="Address" placeholder="Adrress" required>
+							</div>
+
+							<div class="form-group">
+								<input type="number" class="form-control form-control-lg" asp-for="Phone" placeholder="Phone" required>
+							</div>
+							
+
+							<div class="mt-3">
+								<button type="Submit" class="btn btn-block btn-gradient-primary btn-lg font-weight-medium auth-form-btn">SIGN UP</button>
+							</div>
+							<div class="text-center mt-4 font-weight-light">
+								Already have an account? <a asp-action="Login" asp-controller="Auth" asp-area="Admin" class="text-primary">Login</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- content-wrapper ends -->
+	</div>
+	<!-- page-body-wrapper ends -->
+</div>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+	<script src="~/lib/jquery/dist/jquery.min.js"></script>
+	<script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+	<script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+
+    <script>
+        document.getElementById('password').addEventListener('input', function() {
+            var password = this.value;
+            var length = password.length >= 8;
+            var uppercase = /[A-Z]/.test(password);
+            var lowercase = /[a-z]/.test(password);
+            var number = /[0-9]/.test(password);
+            var special = /[!#$%^&*()_+=\[{\]};:<>|./?,-]/.test(password);
+
+            document.getElementById('length').classList.toggle('valid', length);
+            document.getElementById('length').classList.toggle('invalid', !length);
+            document.getElementById('uppercase').classList.toggle('valid', uppercase);
+            document.getElementById('uppercase').classList.toggle('invalid', !uppercase);
+            document.getElementById('lowercase').classList.toggle('valid', lowercase);
+            document.getElementById('lowercase').classList.toggle('invalid', !lowercase);
+            document.getElementById('number').classList.toggle('valid', number);
+            document.getElementById('number').classList.toggle('invalid', !number);
+            document.getElementById('special').classList.toggle('valid', special);
+            document.getElementById('special').classList.toggle('invalid', !special);
+        });
+    </script>
+}

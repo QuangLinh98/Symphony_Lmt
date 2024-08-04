@@ -1,0 +1,37 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+@model IEnumerable<dynamic>
+
+@{
+    ViewData["Title"] = "Student Exam Results";
+}
+
+<h2>Score of student</h2>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Date of Birth</th>
+
+            <th>Exam Name</th>
+            <th>Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+
+                <td>@item.Name</td>
+                <td>@item.DateOfBirth.ToString("dd/MM/yyyy")</td>
+
+                <td>@item.ExamName</td>
+                <td>@item.Score</td>
+            </tr>
+        }
+    </tbody>
+</table>

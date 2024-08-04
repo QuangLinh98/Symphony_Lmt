@@ -1,0 +1,66 @@
+﻿@using LModels
+@{
+    
+    var listExam = ViewBag.Exams as List<LModels.ExModel.EX_Exam>;
+  
+}
+
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <div class="row" style="height:50px">
+            </div>
+            <h4 style="font-weight:bolder" class="card-title">List Exam</h4>
+            <p class="card-description" style="height:30px"></p>
+            <table class="table">
+                <thead style="font-weight:bolder">
+                    <tr>
+                        <td>No #:</td>
+                        <td>Exam Name</td>
+                        <td>Time Start</td>
+                        <td>TotalMins</td>
+                        <td>Time End</td>
+                        
+                        <td>Acion</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        var No = 1;
+                        @foreach (var item in listExam.Where(x=>x.Status == 1))
+                        {
+                            <tr id="row-@item.ExamID">
+                                <td>@No</td>
+                                <td> @item.ExamName</td>
+                                <td>@item.ExamDate</td>
+                                <td>@item.TotalMins</td>
+                                <td>@item.TimeEnd</td>
+                                @{
+                                    if (item.TimeEnd > DateTime.Now)
+                                    {
+                                        <td> <button onclick="RenderExams(@item.ExamID)" type="button" class="btn btn-success">Take the Test</button> </td>
+                                    }
+
+                                    else
+                                    {
+                                        <td></td>
+                                    }
+                                }
+                                    
+                            </tr>
+                        }
+
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script>
+
+    function RenderExams(ExamID) {
+        var _url = '@Url.Action("Index", "Thi")' + "?ExamId=" + ExamID;
+        window.location.href = _url; // Sử dụng đúng tên biến _url
+    }
+</script>

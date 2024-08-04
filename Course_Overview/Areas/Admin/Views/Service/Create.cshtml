@@ -1,0 +1,34 @@
+﻿@using LModels.Client
+@model Services
+
+<div class="card shadow boder-0 mt-4">
+	<div class="card-body p-4">
+		<h2>Create Service</h2>
+		<form class="bg-gray" asp-action="Create" >
+			<div class="mb-3 mt-3 form-group">
+				<label for="title">Title:</label>
+				<input type="text" class="form-control"
+					   placeholder="Enter title" asp-for="Title">
+				<span class="text-danger" asp-validation-for="Title"></span>
+			</div>
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="Icon">Icon:</label>
+				<input type="text" class="form-control"
+					   placeholder="Enter icon class (e.g., bi bi-alarm)" asp-for="Icon">
+				<span class="text-danger" asp-validation-for="Icon"></span>
+			</div>
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="Description">Description:</label>
+				<textarea type="text" class="form-control"
+						  placeholder="Enter Description" asp-for="Description"></textarea>
+				<span class="text-danger" asp-validation-for="Description"></span>
+			</div>
+
+			
+			<button type="submit" class="btn btn-secondary" asp-action="Index">Back</button>
+			<button type="submit" class="btn btn-secondary">Submit</button>
+		</form>
+	</div>
+</div>

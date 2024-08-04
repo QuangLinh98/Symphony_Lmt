@@ -1,0 +1,172 @@
+﻿<div class="container mt-5">
+	<div class="row justify-content-center">
+		<div class="col-md-8">
+			<div class="card">
+				<div class="card-header text-center">
+					<h2>Feedback Form</h2>
+				</div>
+
+				<div class="card-body">
+					<form id="evaluationForm">
+						<div class="row">
+							<div class="form-group col-4">
+								<label for="fullName" class="col-sm-3 col-form-label">Name:</label>
+
+								<input type="text" class="form-control" id="fullName" required>
+
+							</div>
+							<div class="form-group col-4">
+								<label for="classNumber" class="col-sm-3 col-form-label">Class :</label>
+
+								<input type="text" class="form-control" id="classNumber" required>
+
+							</div>
+						</div>
+
+						<p>Please Evaluate Honestly</p>
+						<div class="form-group">
+							<table class="table table-bordered">
+								<thead>
+									<tr>
+										<th></th>
+										<th>Excellent</th>
+										<th>Very Good</th>
+										<th>Fair</th>
+										<th>Poor</th>
+										<th>Very Poor</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td>The course as a whole was</td>
+										<td><input type="radio" name="courseAsWhole" value="Excellent" required></td>
+										<td><input type="radio" name="courseAsWhole" value="Very Good" required></td>
+										<td><input type="radio" name="courseAsWhole" value="Fair" required></td>
+										<td><input type="radio" name="courseAsWhole" value="Poor" required></td>
+										<td><input type="radio" name="courseAsWhole" value="Very Poor" required></td>
+									</tr>
+									<tr>
+										<td>The course content was</td>
+										<td><input type="radio" name="courseContent" value="Excellent" required></td>
+										<td><input type="radio" name="courseContent" value="Very Good" required></td>
+										<td><input type="radio" name="courseContent" value="Fair" required></td>
+										<td><input type="radio" name="courseContent" value="Poor" required></td>
+										<td><input type="radio" name="courseContent" value="Very Poor" required></td>
+									</tr>
+									<tr>
+										<td>The instructor's contribution to the course was</td>
+										<td><input type="radio" name="instructorContribution" value="Excellent" required></td>
+										<td><input type="radio" name="instructorContribution" value="Very Good" required></td>
+										<td><input type="radio" name="instructorContribution" value="Fair" required></td>
+										<td><input type="radio" name="instructorContribution" value="Poor" required></td>
+										<td><input type="radio" name="instructorContribution" value="Very Poor" required></td>
+									</tr>
+									<tr>
+										<td>The instructor's effectiveness in teaching the subject matter was</td>
+										<td><input type="radio" name="instructorEffectiveness" value="Excellent" required></td>
+										<td><input type="radio" name="instructorEffectiveness" value="Very Good" required></td>
+										<td><input type="radio" name="instructorEffectiveness" value="Fair" required></td>
+										<td><input type="radio" name="instructorEffectiveness" value="Poor" required></td>
+										<td><input type="radio" name="instructorEffectiveness" value="Very Poor" required></td>
+									</tr>
+									<tr>
+										<td>Course Organization was</td>
+										<td><input type="radio" name="courseOrganization" value="Excellent" required></td>
+										<td><input type="radio" name="courseOrganization" value="Very Good" required></td>
+										<td><input type="radio" name="courseOrganization" value="Fair" required></td>
+										<td><input type="radio" name="courseOrganization" value="Poor" required></td>
+										<td><input type="radio" name="courseOrganization" value="Very Poor" required></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="form-group">
+							<label for="effort">The Amount of effort you put into this course was:</label>
+							<div class="d-flex flex-row justify-content-around">
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="effort" id="effort1" value="1" required>
+									<label class="form-check-label" for="effort1">1</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="effort" id="effort2" value="2" required>
+									<label class="form-check-label" for="effort2">2</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="effort" id="effort3" value="3" required>
+									<label class="form-check-label" for="effort3">3</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="effort" id="effort4" value="4" required>
+									<label class="form-check-label" for="effort4">4</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="effort" id="effort5" value="5" required>
+									<label class="form-check-label" for="effort5">5</label>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="hoursPerWeek">On average, how many hours a week did you spend on this course?</label>
+							<div class="d-flex flex-row justify-content-around">
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="hoursPerWeek" id="hours1" value="0-2" required>
+									<label class="form-check-label" for="hours1">0-2</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="hoursPerWeek" id="hours2" value="2-5" required>
+									<label class="form-check-label" for="hours2">2-5</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="hoursPerWeek" id="hours3" value="6-10" required>
+									<label class="form-check-label" for="hours3">6-10</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="hoursPerWeek" id="hours4" value="11-14" required>
+									<label class="form-check-label" for="hours4">11-14</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="hoursPerWeek" id="hours5" value="15Up" required>
+									<label class="form-check-label" for="hours5">15 Up</label>
+								</div>
+							</div>
+						</div>
+
+						<div class="form-group">
+							<label for="expectedGrade">What grade do you expect in this course?</label>
+							<div class="d-flex flex-row justify-content-around">
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="expectedGrade" id="grade1" value="60-69" required>
+									<label class="form-check-label" for="grade1">(60-69)</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="expectedGrade" id="grade2" value="70-79" required>
+									<label class="form-check-label" for="grad21">(70-79)</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="expectedGrade" id="grade3" value="80-89" required>
+									<label class="form-check-label" for="grade3">(80-89)</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="expectedGrade" id="grade4" value="90-99" required>
+									<label class="form-check-label" for="grade4">(90-99)</label>
+								</div>
+								<div class="form-check">
+									<input class="form-check-input" type="radio" name="expectedGrade" id="grade5" value="100" required>
+									<label class="form-check-label" for="grade5">(100)</label>
+								</div>
+							</div>
+						</div>
+
+						
+						<div class="form-group">
+							<label>Is there any other feedback you'd like to give on this class?</label>
+							<textarea class="form-control" name="additionalFeedback" rows="3"></textarea>
+						</div>
+						<button type="submit" class="btn btn-primary">Submit</button>
+					</form>
+				</div>
+
+			</div>
+		</div>
+	</div>
+</div>

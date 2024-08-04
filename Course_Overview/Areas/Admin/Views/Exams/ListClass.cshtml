@@ -1,0 +1,43 @@
+﻿@using LModels
+
+@{
+    // ViewBag._ClassExams = _ClassExams;
+    // ViewBag._Classes = _Classes;
+    // ViewBag.EX_Exams = EX_Exams;
+    Layout = null;
+    var _ClassExams = ViewBag._ClassExams as List<LModels.ExModel.ClassExam>;
+    var _Classes = ViewBag._Classes as List<LModels.Class>;
+    var EX_Exams = ViewBag.EX_Exams as LModels.ExModel.EX_Exam;
+
+}
+
+
+
+<table class="table">
+   
+    <thead style="font-weight:bolder">
+        <tr>
+            <td>No #:</td>
+            <td>ExamName</td>
+            <td>Use</td>
+        </tr>
+    </thead>
+    <tbody>
+        @{
+            var No = 1;
+            foreach (var item in _Classes)
+            {
+                <tr>
+                    <td>@No</td>
+                    <td>@item.ClassName</td>
+                    @{
+                        var c = _ClassExams.Where(x => x.ClassID == item.ClassID).FirstOrDefault();
+                        bool isChecked = c != null;
+                    }
+                    <td> <input onclick="changeStatus(@EX_Exams.ExamID, @item.ClassID)" type="checkbox" @(isChecked ? "checked" : "") /></td>
+                </tr>
+            }
+        }
+
+    </tbody>
+</table>

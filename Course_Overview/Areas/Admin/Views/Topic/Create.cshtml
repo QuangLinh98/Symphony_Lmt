@@ -1,0 +1,42 @@
+﻿@using LModels
+@model Topic
+
+<div class="card shadow boder-0 mt-4">
+	<div class="card-body p-4">
+		<h2>Create Topic</h2>
+		<form class="bg-gray" asp-action="Create" enctype="multipart/form-data">
+			<div class="mb-3 mt-3 form-group">
+				<label for="name">Title:</label>
+				<input type="text" class="form-control"
+					   placeholder="Enter Title" asp-for="TopicName">
+				<span class="text-danger" asp-validation-for="TopicName"></span>
+			</div>
+
+			<div class="mb-3 mt-3">
+				<label for="Category">Category:</label>
+				<select asp-items="@ViewBag.Courses" class="form-select"
+						asp-for="CourseID"></select>
+			</div>
+
+			<div class="mb-3 mt-3 form-group">
+				<label for="Description">Description:</label>
+				<textarea type="text" class="form-control"
+						  placeholder="Enter Description" asp-for="Description"></textarea>
+				<span class="text-danger" asp-validation-for="Description"></span>
+			</div>
+
+			<div class="mb-3 mt-3">
+				<label for="image">Image:</label>
+				<input type="file" class="form-control"
+					   placeholder="Enter ImagePath" name="ImageFile">
+				<span asp-validation-for="ImageFile" class="text-danger"></span>
+			</div>
+			<button type="submit" class="btn btn-secondary" asp-action="Index">Back</button>
+			<button type="submit" class="btn btn-secondary">Submit</button>
+		</form>
+	</div>
+</div>
+@section scripts {
+	<script>CKEDITOR.replace("Description")</script>
+
+}

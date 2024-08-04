@@ -1,0 +1,269 @@
+﻿@* @using LModels
+
+@{
+    var Exams = ViewBag._Exams as LModels.ExModel.EX_Exam;
+    var ExamQuestions = ViewBag._ExamQuestions as List<LModels.ExModel.EX_ExamQuestion>;
+    var Subject = ViewBag._Subject as LModels.ExModel.EX_Subject;
+    var Lession = ViewBag._Lession as List<LModels.ExModel.EX_Lesson>;
+    var result = ViewBag.result as List<LModels.ExModel.EX_StudentExamResult>;
+
+    var totalCorrectAnswers = result?.Count(r => r.IsCorrect) ?? 0;
+    var total = ExamQuestions.Count();
+}
+
+<div class="col-lg-12 grid-margin stretch-card">
+    <div class="card">
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-12 text-center">
+                    <h3>Countdown Timer</h3>
+                    <div id="timer" style="font-size: 2rem; font-weight: bold;">30:00</div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-12" id="ListExams">
+                </div>
+            </div>
+            <div class="row mb-4">
+                <div class="col-md-12 text-center">
+                    <button id="submitBtn" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/AdminLayout/assets/js/Notification.js"></script>
+<script src="~/AdminLayout/assets/js/Class.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        filter();
+    });
+
+    function filter() {
+        var ExamID = @Exams.ExamID;
+        var _url = '@Url.Action("PartialList")';
+        $.ajax({
+            url: _url,
+            data: { ExamID: ExamID },
+            method: 'POST',
+            dataType: 'html',
+            success: function (data) {
+                $('#ListExams').html(data);
+            }
+        });
+    }
+
+    function startCountdown(endTime, display) {
+        function updateTimer() {
+            var now = new Date().getTime();
+            var timeRemaining = endTime - now;
+
+            if (timeRemaining < 0) {
+                clearInterval(interval);
+                display.textContent = "EXPIRED";
+
+                var totalCorrectAnswers = @totalCorrectAnswers;
+                var total = @total;
+                var scoreDisplay = document.querySelector("#scoreDisplay");
+
+                if (scoreDisplay) {
+                    scoreDisplay.textContent = "Điểm số: " + totalCorrectAnswers + "/" + total;
+                }
+
+                return;
+            }
+
+            var days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+            days = days < 10 ? "0" + days : days;
+            hours = hours < 10 ? "0" + hours : hours;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = days + " days " + hours + ":" + minutes + ":" + seconds;
+        }
+
+        var interval = setInterval(updateTimer, 1000);
+        updateTimer();
+    }
+
+    function Submit(ExamID, QuestionID, AnswerID) {
+        var _url = '@Url.Action("Submit")';
+        $.ajax({
+            url: _url,
+            data: { ExamID: ExamID, QuestionID: QuestionID, AnswerID: AnswerID },
+            method: 'POST',
+            success: function (data) {
+                if (data.success) {
+                    Swal.fire('Success', data.message, 'success');
+                } else {
+                    Swal.fire('Error', data.message, 'error');
+                }
+                filter();
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX error:', status, error);
+            }
+        });
+    }
+
+    window.onload = function () {
+        var examDateString = '@Exams.TimeEnd?.ToString("yyyy-MM-ddTHH:mm:ss")';
+        var examDate = new Date(examDateString).getTime();
+
+        var display = document.querySelector('#timer');
+        startCountdown(examDate, display);
+    };
+</script>
+ *@
+ @using LModels
+
+@{
+	var Exams = ViewBag._Exams as LModels.ExModel.EX_Exam;
+	var ExamQuestions = ViewBag._ExamQuestions as List<LModels.ExModel.EX_ExamQuestion>;
+	var Subject = ViewBag._Subject as LModels.ExModel.EX_Subject;
+	var Lession = ViewBag._Lession as List<LModels.ExModel.EX_Lesson>;
+	var result = ViewBag.result as List<LModels.ExModel.EX_StudentExamResult>;
+
+	var totalCorrectAnswers = result?.Count(r => r.IsCorrect) ?? 0;
+	var total = ExamQuestions.Count();
+}
+
+<div class="col-lg-12 grid-margin stretch-card">
+	<div class="card">
+		<div class="card-body">
+			<div class="row mb-4">
+				<div class="col-md-12 text-center">
+					<h3>Countdown Timer</h3>
+					<div id="timer" style="font-size: 2rem; font-weight: bold;">30:00</div>
+				</div>
+			</div>
+
+			@*  <div class="row mb-4">
+			<div class="col-md-12 text-center">
+			<div id="scoreDisplay" style="font-size: 1.5rem;"></div>
+			</div>
+			</div> *@
+
+			<div class="row">
+				<div class="col-md-12" id="ListExams">
+				</div>
+			</div>
+			<div class="row mb-4">
+				<div class="col-md-12 text-center">
+					<button id="submitBtn" class="btn btn-primary">Submit</button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="~/AdminLayout/assets/js/Notification.js"></script>
+<script src="~/AdminLayout/assets/js/Class.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+	var countdownInterval; // Biến toàn cục để giữ tham chiếu đến interval
+
+	$(document).ready(function () {
+		filter();
+
+		// Xử lý sự kiện khi nút Submit được nhấn
+		$('#submitBtn').click(function () {
+			// Ngừng đếm ngược
+			clearInterval(countdownInterval);
+			// Đặt thời gian đếm ngược thành "EXPIRED"
+			$('#timer').text('EXPIRED');
+			// Tự động chuyển hướng sau một khoảng thời gian ngắn để đảm bảo rằng người dùng có thể thấy trạng thái "EXPIRED"
+			setTimeout(function () {
+				window.location.href = '@Url.Action("Index", "Core")';
+			}, 100); // 100ms để đảm bảo thời gian có thể hiển thị
+		});
+	});
+
+	function filter() {
+		var ExamID = @Exams.ExamID;
+		var _url = '@Url.Action("PartialList")';
+		$.ajax({
+			url: _url,
+			data: { ExamID: ExamID },
+			method: 'POST',
+			dataType: 'html',
+			success: function (data) {
+				$('#ListExams').html(data);
+			}
+		});
+	}
+
+    function startCountdown(endTime, display) {
+        function updateTimer() {
+            var now = new Date().getTime();
+            var timeRemaining = endTime - now;
+
+            if (timeRemaining < 0) {
+                clearInterval(interval);
+                display.textContent = "EXPIRED";
+                window.location.href = '@Url.Action("Index", "Core")';
+                var totalCorrectAnswers = @totalCorrectAnswers;
+                var total = @total;
+                var scoreDisplay = document.querySelector("#scoreDisplay");
+
+                if (scoreDisplay) {
+                    scoreDisplay.textContent = "Score: " + totalCorrectAnswers + "/" + total;
+                }
+
+                return;
+            }
+
+            var days = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+            var hours = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            var minutes = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+            var seconds = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+            days = days < 10 ? "0" + days : days;
+            hours = hours < 10 ? "0" + hours : hours;
+            minutes = minutes < 10 ? "0" + minutes : minutes;
+            seconds = seconds < 10 ? "0" + seconds : seconds;
+
+            display.textContent = days + " days " + hours + ":" + minutes + ":" + seconds;
+        }
+
+        var interval = setInterval(updateTimer, 1000);
+        updateTimer();
+    }
+
+    function Submit(ExamID, QuestionID, AnswerID) {
+        var _url = '@Url.Action("Submit")';
+        $.ajax({
+            url: _url,
+            data: { ExamID: ExamID, QuestionID: QuestionID, AnswerID: AnswerID },
+            method: 'POST',
+            success: function (data) {
+                if (data.success) {
+                    Swal.fire('Success', data.message, 'success');
+                } else {
+                    Swal.fire('Error', data.message, 'error');
+                }
+                filter();
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX error:', status, error);
+            }
+        });
+    }
+
+    window.onload = function () {
+        var examDateString = '@Exams.TimeEnd?.ToString("yyyy-MM-ddTHH:mm:ss")';
+        var examDate = new Date(examDateString).getTime();
+
+        var display = document.querySelector('#timer');
+        startCountdown(examDate, display);
+    };
+</script>

@@ -1,0 +1,36 @@
+﻿@using LModels
+@model IEnumerable<Contact>
+
+<div class="container mt-5">
+    <section class="row">
+        <div class="col-md-12">
+            <h2 class="text-center mb-4">------------------ ADMISSION CONSULTING OFFICE -----------------</h2>
+        </div>
+
+        @foreach (var contact in Model)
+        {
+            <div class="col-md-6 mb-4">
+                <div class="card">
+                    @if (!string.IsNullOrEmpty(contact.ImagePath))
+                    {
+                        <img src="~/@contact.ImagePath" class="card-img-top custom-card-img" style="height: 400px" alt="Image for @contact.BranchName" />
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@contact.BranchName</h5>
+                        <p class="card-text"><strong>Address:</strong> @contact.Address</p>
+                        <p class="card-text"><strong>Phone Numbers:</strong></p>
+                        <ul class="list-unstyled">
+                            <li><strong>Admissions Office:</strong> @contact.Phone</li>
+                            <li><strong>Hotline:</strong> @contact.Phone1</li>
+                            <li><strong>Training Department:</strong> @contact.Phone2</li>
+                            
+                        </ul>
+                        <p class="card-text"><strong>Email:</strong> @contact.Email</p>
+                        <div>@Html.Raw(contact.Map)</div>
+                    </div>
+                </div>
+            </div>
+        }
+    </section>
+</div>
+

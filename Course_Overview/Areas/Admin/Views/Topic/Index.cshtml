@@ -1,0 +1,30 @@
+﻿@using LModels
+@model IEnumerable<Topic>
+
+<div class="row">
+    <h4 class="card-title">Topic List</h4>
+    <div class="text-end">
+        <a class="btn btn-secondary" asp-action="Create" asp-area="Admin">
+            <i class="bi bi-plus-circle"></i>
+            Create a new topic
+        </a>
+    </div>
+
+    <table class="table table-striped" id="topicTable">
+        <thead>
+            <tr>
+                <th> TopicID </th>
+                <th> TopicName</th>
+                <th> Course</th>
+                <th> Image </th>
+            </tr>
+        </thead>
+    </table>
+</div>
+
+@section scripts {
+    @*Đoạn mã hiển thị thông báo alert*@
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="~/AdminLayout/assets/js/Notification.js"></script>
+    <script src="~/AdminLayout/assets/js/Topic.js"></script>
+} 
