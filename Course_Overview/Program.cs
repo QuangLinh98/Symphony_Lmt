@@ -28,6 +28,7 @@ builder.Services.AddScoped<IRoleRepository, RoleService>();
 builder.Services.AddScoped<IPermissionRepository, PermissionService>();
 builder.Services.AddScoped<IRolePermissionrepository, RolePermissionService>();
 builder.Services.AddScoped<LoginService>();
+builder.Services.AddScoped<StudentLoginService>();
 builder.Services.AddScoped<ICourserRepository, CourseService>();
 builder.Services.AddScoped<ITopicRepository, TopicService>();
 builder.Services.AddScoped<ITeacherRepository, TeacherService>();
@@ -39,6 +40,7 @@ builder.Services.AddScoped<IAboutRepository, AboutService>();
 builder.Services.AddScoped<IScheduleRepository, ScheduleService>();
 // Đăng ký IPasswordHasher<User>
 builder.Services.AddScoped<IPasswordHasher<User>, PasswordHasher<User>>();
+builder.Services.AddScoped<IPasswordHasher<Student>, PasswordHasher<Student>>();
 
 // Phần login 
 builder.Services.AddHttpContextAccessor();

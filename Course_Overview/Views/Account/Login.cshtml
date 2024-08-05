@@ -7,6 +7,40 @@
                     <h2>Login</h2>
                 </div>
                 <div class="card-body">
+                    @*Show temptData Error*@
+                    @{
+                        var errorMessage = TempData["ErrorMessage"] as string;
+                    }
+
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger" role="alert">
+                            @errorMessage
+                        </div>
+                    }
+                    @*Show temptData Success*@
+                    @{
+                        var successMessage = TempData["SuccessMessage"] as string;
+                    }
+
+                    @if (!string.IsNullOrEmpty(successMessage))
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @successMessage
+                        </div>
+                    }
+
+                    @*Show temptData Success*@
+                    @{
+                        var infoMessage = TempData["InfoMessage"] as string;
+                    }
+
+                    @if (!string.IsNullOrEmpty(infoMessage))
+                    {
+                        <div class="alert alert-success" role="alert">
+                            @infoMessage
+                        </div>
+                    }
                     <form asp-action="Login" method="post">
                         <div class="form-group">
                             <label for="email">Email</label>

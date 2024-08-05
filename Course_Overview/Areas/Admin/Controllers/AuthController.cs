@@ -75,54 +75,51 @@ namespace Course_Overview.Areas.Admin.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View(model);
+                // Lấy dữ liệu người dùng từ session
+                var userJson = SessionHelper.GetSession(HttpContext, "userSession");
+                if (string.IsNullOrEmpty(userJson))
+                {
+                    return RedirectToAction("Login");
+                }
+
+                var user = JsonConvert.DeserializeObject<User>(userJson);
+                model.Email = user.Email; 
+                model.Name = user.Name;
+                model.Address = user.Address;
+                model.Phone = user.Phone;
+
+                return View(model); 
             }
 
-            var userJson = SessionHelper.GetSession(HttpContext, "userSession");
-            if (string.IsNullOrEmpty(userJson))
+            var userSession = SessionHelper.GetSession(HttpContext, "userSession");
+            if (string.IsNullOrEmpty(userSession))
             {
                 return RedirectToAction("Login");
             }
 
-            var user = JsonConvert.DeserializeObject<User>(userJson);
-            var currentUser = await _userRepository.GetUserByIdAsync(user.ID);
-            if (currentUser == null)
+            var currentUser = JsonConvert.DeserializeObject<User>(userSession);
+            var existingUser = await _userRepository.GetUserByIdAsync(currentUser.ID);
+            if (existingUser == null)
             {
                 TempData["ErrorMessage"] = "User not found.";
                 return RedirectToAction("Login");
             }
 
             // Cập nhật thông tin người dùng
-            currentUser.Name = model.Name;
-            currentUser.Address = model.Address;
-            currentUser.Phone = model.Phone;
+            existingUser.Name = model.Name;
+            existingUser.Address = model.Address;
+            existingUser.Phone = model.Phone;
 
-            // Kiểm tra mật khẩu mới
-            if (!string.IsNullOrEmpty(model.NewPassword))
-            {
-                if (model.NewPassword != model.ConfirmPassword)
-                {
-                    TempData["ErrorMessage"] = "Passwords do not match.";
-                    return View(model);
-                }
+            await _userRepository.UpdateUser(existingUser);
 
-                if (!ValidatePassword(model.NewPassword, out string errorMessage))
-                {
-                    TempData["ErrorMessage"] = errorMessage;
-                    return View(model);
-                }
-
-                // Cập nhật mật khẩu
-                currentUser.Password = _passwordHasher.HashPassword(currentUser, model.NewPassword);
-            }
-
-            await _userRepository.UpdateUser(currentUser);
-            userJson = JsonConvert.SerializeObject(currentUser);
-            SessionHelper.SetSession(HttpContext, "userSession", userJson);
+            // Cập nhật lại session
+            userSession = JsonConvert.SerializeObject(existingUser);
+            SessionHelper.SetSession(HttpContext, "userSession", userSession);
 
             TempData["SuccessMessage"] = "User information updated successfully.";
             return RedirectToAction("Index");
         }
+
 
         //Phương thức View Login
         public async Task<IActionResult> Login()
@@ -434,7 +431,8 @@ namespace Course_Overview.Areas.Admin.Controllers
 			}
 
 			var model = new ResetPasswordViewModel { Token = token };
-			return View(model);
+            ViewBag.HideSideBar = true;     // Đặt giá trị để ẩn sidebar
+            return View(model);
 		}
 
 		//Phương thức xử lý ResetPassword

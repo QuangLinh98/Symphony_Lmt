@@ -70,7 +70,7 @@ namespace Course_Overview.Areas.Admin.Controllers
 			return View(student);
 		}
 
-		public async Task<IActionResult>Update(int id)
+		/*public async Task<IActionResult>Update(int id)
 		{
 			var student = await _studentRepository.GetOneStudent(id);
             if (student == null)
@@ -78,7 +78,7 @@ namespace Course_Overview.Areas.Admin.Controllers
 				return NotFound();
             }
 			return View(student);
-        }
+        }*/
 
 		[HttpPost]
 		public async Task<IActionResult> Update(Student student)
@@ -112,7 +112,7 @@ namespace Course_Overview.Areas.Admin.Controllers
 			return View(student);
 		}
 
-		public async Task<IActionResult>Delete(int id)
+		/*public async Task<IActionResult>Delete(int id)
 		{
 			try
 			{
@@ -136,6 +136,6 @@ namespace Course_Overview.Areas.Admin.Controllers
 				ModelState.AddModelError("", ex.Message);
 			}
 			return View();
-		}
+		}*/
 	}
 }
