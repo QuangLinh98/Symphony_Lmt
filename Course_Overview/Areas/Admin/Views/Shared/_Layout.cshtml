@@ -1,6 +1,4 @@
-﻿
-
-@using Newtonsoft.Json
+﻿@using Newtonsoft.Json
 @using Course_Overview.Helper
 @inject IHttpContextAccessor HttpContextAccessor
 <!DOCTYPE html>
@@ -27,13 +25,13 @@
 
 	@*Thư viện DataTable*@
 	<link rel="stylesheet" href="https://cdn.datatables.net/2.0.7/css/dataTables.dataTables.min.css" />
-	
+
 	@RenderSection("Styles", required: false)
 </head>
 <body>
-	
-	<div class="container-scroller">	
-		
+
+	<div class="container-scroller">
+
 		<!-- partial:partials/_navbar.html -->
 		<nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
 			<div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
@@ -202,8 +200,8 @@
 			</div>
 		</nav>
 		<!-- partial -->
-		
-			<div class="container-fluid page-body-wrapper">
+
+		<div class="container-fluid page-body-wrapper">
 			@if (ViewBag.HideSideBar == null || !ViewBag.HideSideBar)
 			{
 				<!-- partial:partials/_sidebar.html -->
@@ -241,7 +239,7 @@
 								<i class="mdi mdi-crosshairs-gps menu-icon"></i>
 							</a>
 							<div class="collapse" id="courseRegistration">
-								<ul class="nav flex-column sub-menu">								
+								<ul class="nav flex-column sub-menu">
 									<li class="nav-item"> <a class="nav-link" asp-controller="RegistrationCourse" asp-action="Index" asp-area="Admin">Course Registration</a></li>
 								</ul>
 							</div>
@@ -326,48 +324,48 @@
 						</li>
 
 						@*Vien~*@
-					    <li class="nav-item">
-						<a class="nav-link" data-bs-toggle="collapse" href="#Managament" aria-expanded="false" aria-controls="SliderMenu">
-							<span class="menu-title">Managament</span>
-							<i class="menu-arrow"></i>
-							<i class="mdi mdi-crosshairs-gps menu-icon"></i>
-						</a>
-						<div class="collapse" id="Managament">
-							<ul class="nav flex-column sub-menu">
-								<li class="nav-item"> <a class="nav-link" asp-controller="EX_StudentExamResult" asp-action="Index" asp-area="Admin">Student Managament</a></li>
-								<li class="nav-item"> <a class="nav-link" asp-controller="StudentClass" asp-action="Index" asp-area="Admin">Student payment</a></li>
-								<li class="nav-item"> <a class="nav-link" asp-controller="Subject" asp-action="Index" asp-area="Admin">Subject Managament</a></li>
-								<li class="nav-item"> <a class="nav-link" asp-controller="Questions" asp-action="Index" asp-area="Admin">Questions Managament</a></li>
-								<li class="nav-item"> <a class="nav-link" asp-controller="Exams" asp-action="Index" asp-area="Admin">Exams Managament</a></li>
-							</ul>
-</div>
-					</li>
+						<li class="nav-item">
+							<a class="nav-link" data-bs-toggle="collapse" href="#Managament" aria-expanded="false" aria-controls="SliderMenu">
+								<span class="menu-title">Managament</span>
+								<i class="menu-arrow"></i>
+								<i class="mdi mdi-crosshairs-gps menu-icon"></i>
+							</a>
+							<div class="collapse" id="Managament">
+								<ul class="nav flex-column sub-menu">
+									<li class="nav-item"> <a class="nav-link" asp-controller="EX_StudentExamResult" asp-action="Index" asp-area="Admin">Student Managament</a></li>
+									<li class="nav-item"> <a class="nav-link" asp-controller="StudentClass" asp-action="Index" asp-area="Admin">Student payment</a></li>
+									<li class="nav-item"> <a class="nav-link" asp-controller="Subject" asp-action="Index" asp-area="Admin">Subject Managament</a></li>
+									<li class="nav-item"> <a class="nav-link" asp-controller="Questions" asp-action="Index" asp-area="Admin">Questions Managament</a></li>
+									<li class="nav-item"> <a class="nav-link" asp-controller="Exams" asp-action="Index" asp-area="Admin">Exams Managament</a></li>
+								</ul>
+							</div>
+						</li>
 
 
 					</ul>
 				</nav>
 				<!-- partial -->
 			}
-		
-				<div class="main-panel">
-					<div class="content-wrapper">
-						@RenderBody()
-					</div>
 
-					<!-- content-wrapper ends -->
-					<!-- partial:partials/_footer.html -->
-					<footer class="footer">
-						<div class="container-fluid text-center">
-							<span class="text-muted  d-block text-center text-sm-start d-sm-inline-block">Copyright © bootstrapdash.com 2021</span>
-						</div>
-					</footer>
-					<!-- partial -->
+			<div class="main-panel">
+				<div class="content-wrapper">
+					@RenderBody()
 				</div>
-				<!-- main-panel ends -->
-			</div
 
-		
-		
+				<!-- content-wrapper ends -->
+				<!-- partial:partials/_footer.html -->
+				<footer class="footer">
+					<div class="container-fluid text-center">
+						<span class="text-muted  d-block text-center text-sm-start d-sm-inline-block">Copyright © bootstrapdash.com 2021</span>
+					</div>
+				</footer>
+				<!-- partial -->
+			</div>
+			<!-- main-panel ends -->
+		</div>
+
+
+
 		<!-- page-body-wrapper ends -->
 	</div>
 	<!-- container-scroller -->

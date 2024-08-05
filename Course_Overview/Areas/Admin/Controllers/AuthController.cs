@@ -241,12 +241,14 @@ namespace Course_Overview.Areas.Admin.Controllers
 			if (string.IsNullOrEmpty(password))
 			{
 				ModelState.AddModelError("Password", "Password is required.");
+				ViewBag.HideSideBar = true;    //Ẩn SideBar
 				return View(user);
 			}
 
 			if (!ValidatePassword(password, out string errorMessage))
 			{
 				TempData["ErrorMessage"] = "Password invalid format. Please try again";
+				ViewBag.HideSideBar = true;    //Ẩn SideBar
 				return View(user);
 			}
 
@@ -266,6 +268,7 @@ namespace Course_Overview.Areas.Admin.Controllers
 			await _emailService.SendMail(user.Email, "Confirm your email", $"Please confirm your account by clicking this link: <a href='{callbackUrl}'>link</a>");
 			TempData["SuccessMessage"] = "Registration successful. Please check your email to confirm your account.";
 
+			ViewBag.HideSideBar = true;    //Ẩn SideBar
 			return RedirectToAction("Login");
 		}
 
@@ -382,6 +385,7 @@ namespace Course_Overview.Areas.Admin.Controllers
 		//Phương thức View ForgotPassword
 		public IActionResult ForgotPassword()
 		{
+			ViewBag.HideSideBar = true;    //Ẩn SideBar
 			return View();
 		}
 
