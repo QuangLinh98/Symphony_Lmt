@@ -10,20 +10,20 @@ namespace Course_Overview.Areas.Admin.Controllers
 	[Area("Admin")]
 	public class RegistrationCourseController : Controller
 	{
-        private readonly IUserRepository _userRepository;
+        private readonly IStudentRepository _studentRepository;
         private readonly DatabaseContext _dbContext;
         private readonly EmailService _emailService;
-        public RegistrationCourseController(DatabaseContext dbContext, EmailService emailService,IUserRepository userRepository)
+        public RegistrationCourseController(DatabaseContext dbContext, EmailService emailService, IStudentRepository studentRepository)
 		{
 			_dbContext = dbContext;
 			_emailService = emailService;
-            _userRepository = userRepository;
+			_studentRepository = studentRepository;
 		}
 		public async Task<IActionResult> Index()
 		{
 			var registrations = await _dbContext.RegistrationCourses
 							   .Include(cr => cr.Course)
-							   .Include(cr => cr.User)
+							   .Include(cr => cr.Student)
 							   .ToListAsync();
 			return View(registrations);
 		}
@@ -33,7 +33,7 @@ namespace Course_Overview.Areas.Admin.Controllers
 		public async Task<IActionResult> AcceptRegistration( int id)
 		{
 			var registration = await _dbContext.RegistrationCourses
-                                               .Include(rc => rc.User)
+                                               .Include(rc => rc.Student)
                                                .FirstOrDefaultAsync(rc => rc.RegistrationCourseID == id);
 			if (registration == null)
 			{
@@ -43,12 +43,12 @@ namespace Course_Overview.Areas.Admin.Controllers
 			await _dbContext.SaveChangesAsync();
 
 			//Tạo ra 1 mã thông báo xác nhận email
-			var user = registration.User;
+			var student = registration.Student;
             var token = Guid.NewGuid().ToString();
-            user.EmailConfirmationToken = token;
-            user.EmailConfirmed = false;
+			student.EmailConfirmationToken = token;
+			student.EmailConfirmed = false;
 
-            _dbContext.Users.Update(user);
+            _dbContext.Students.Update(student);
             await _dbContext.SaveChangesAsync();
 
             //Gui thong bao ma xac nhan toi email
@@ -57,7 +57,7 @@ namespace Course_Overview.Areas.Admin.Controllers
                 "RegistrationCourse",
 				new { token }, protocol: HttpContext.Request.Scheme);
 
-            await _emailService.SendMail(user.Email, "Exam schedule announcement", $" Dear Nguyen Quang Linh, Symphony Center has confirmed your registration for the NodeJS course. Please click on the link to proceed to the placement test: <a href='{callbackUrl}'>link</a>");
+            await _emailService.SendMail(student.Email, "Exam schedule announcement", $" Dear Nguyen Quang Linh, Symphony Center has confirmed your registration for the NodeJS course. Please click on the link to proceed to the placement test: <a href='{callbackUrl}'>link</a>");
             TempData["SuccessMessage"] = "Send mail to user successful.";
 
             return RedirectToAction("Index");
@@ -74,12 +74,12 @@ namespace Course_Overview.Areas.Admin.Controllers
 
             try
             {
-                var user = await _userRepository.GetUserByEmailConfirmationTokenAsync(token);
-                if (user != null)
+                var student = await _studentRepository.GetStudentByEmailConfirmationTokenAsync(token);
+                if (student != null)
                 {
-                    user.EmailConfirmed = true;
-                    user.EmailConfirmationToken = null;
-                    await _userRepository.UpdateUser(user);
+					student.EmailConfirmed = true;
+					student.EmailConfirmationToken = null;
+                    await _studentRepository.UpdateStudent(student);
                     TempData["SuccessMessage"] = "Email confirmed successfully. You can start the exam now.";
                     return RedirectToAction("Login");
                 }

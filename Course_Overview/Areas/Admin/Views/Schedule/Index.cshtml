@@ -14,7 +14,8 @@
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Topic</th>
+            <th>Student</th>
+            <th>Course</th>
             <th>Class</th>
             <th>Start Date</th>
             <th>End Date</th>
@@ -29,6 +30,7 @@
         @foreach (var item in Model)
         {
             <tr>
+                <td>@item.Student?.Name</td>
                 <td>@item.Course?.CourseName</td>
                 <td>@item.Class?.ClassName</td>
                 <td>@item.StartDate</td>

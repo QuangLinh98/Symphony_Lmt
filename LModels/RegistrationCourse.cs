@@ -16,9 +16,9 @@ namespace LModels
 		public int CourseID { get; set;}
 		public Course? Course { get; set;}
 
-		[ForeignKey("User")]
-		public int ID { get; set;}
-		public User? User { get; set;}
+		[ForeignKey("Students")]
+		public int StudentID { get; set;}
+		public Student? Student { get; set;}
 
 		public DateTime RegistrationDate { get; set; } // Thời gian đăng ký
 	}

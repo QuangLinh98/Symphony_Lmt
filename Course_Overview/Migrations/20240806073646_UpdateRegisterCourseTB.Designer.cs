@@ -4,6 +4,7 @@ using Course_Overview.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Course_Overview.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240806073646_UpdateRegisterCourseTB")]
+    partial class UpdateRegisterCourseTB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -780,16 +783,11 @@ namespace Course_Overview.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("StudentID")
-                        .HasColumnType("int");
-
                     b.HasKey("ScheduleID");
 
                     b.HasIndex("ClassID");
 
                     b.HasIndex("CourseID");
-
-                    b.HasIndex("StudentID");
 
                     b.ToTable("Schedules");
                 });
@@ -1315,17 +1313,9 @@ namespace Course_Overview.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LModels.Student", "Student")
-                        .WithMany("Schedules")
-                        .HasForeignKey("StudentID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Class");
 
                     b.Navigation("Course");
-
-                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("LModels.SubjectScores", b =>
@@ -1468,8 +1458,6 @@ namespace Course_Overview.Migrations
                     b.Navigation("Payments");
 
                     b.Navigation("RegistrationCourses");
-
-                    b.Navigation("Schedules");
 
                     b.Navigation("SubjectScores");
                 });

@@ -1,14 +1,10 @@
 ﻿@using Newtonsoft.Json
 @using LModels
+
 @using Course_Overview.Helper
 @inject IHttpContextAccessor HttpContextAccessor
 @model LModels.ViewModels.CourseDetailViewModel
-@{
-	var userJson = HttpContextAccessor.HttpContext.Session.GetString("userSession");
-	var user = userJson != null ? JsonConvert.DeserializeObject<User>(userJson) : null;
-	var Name = user?.Name ?? string.Empty;
-	var Email = user?.Email ?? string.Empty;
-}
+
 
 <div class="container-fluid p-0 mb-5">
 	<div class="row mb-4">
@@ -35,6 +31,7 @@
 					</div>
 				</div>
 			}
+			
 		</div>
 	</div>
 	<div class="container">
@@ -94,7 +91,8 @@
 				</div>
 				<div class="text-center">
 					@{
-						if (user != null)
+						var studentId = Context.Session.GetInt32("StudentID");
+						if (studentId.HasValue)
 						{
 							<a asp-action="RegisterCourse" asp-controller="Course" class="btn btn-primary mt-3" data-bs-toggle="modal" data-bs-target="#joinNowModal" data-topic-name="@Model.Course.CourseName" style="border-radius: 30px; padding: 10px 20px; font-size: 16px; transition: background-color 0.3s, color 0.3s;">
 								Register
@@ -147,11 +145,11 @@
 
 					<div class="mb-3">
 						<label for="fullName" class="form-label">Name</label>
-						<input type="text" class="form-control" id="fullName" name="FullName" value="@Name" required>
+						<input type="text" class="form-control" id="fullName" name="FullName" value="@Context.Session.GetString("StudentName")" required>
 					</div>
 					<div class="mb-3">
 						<label for="email" class="form-label">Email</label>
-						<input type="email" class="form-control" id="email" name="Email" value="@Email" required>
+						<input type="email" class="form-control" id="email" name="Email" value="@Context.Session.GetString("StudentEmail")" required>
 					</div>
 					<div class="mb-3">
 						<label for="topicName" class="form-label">Subject</label>

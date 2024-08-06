@@ -18,7 +18,7 @@
     <thead>
         <tr>
             <th>Course</th>
-            <th>User</th>
+            <th>Student</th>
             <th>Phone</th>
             <th>Registration Date</th>
             <th>Status</th>
@@ -30,8 +30,8 @@
         {
             <tr>
                 <td>@item.Course?.CourseName</td>
-                <td>@item.User?.Name</td>
-                <td>@item.User?.Phone</td>
+                <td>@item.Student?.Name</td>
+                <td>@item.Student?.Phone</td>
                 <td>@item.RegistrationDate.ToShortDateString()</td>
                 <td>@item.Status</td>
                 <td>

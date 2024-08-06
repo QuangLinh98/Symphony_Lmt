@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Course_Overview.ViewModel
 {
@@ -21,7 +22,10 @@ namespace Course_Overview.ViewModel
         [StringLength(100, ErrorMessage = "Address cannot exceed 100 characters.")]
         public string Address { get; set; }
 
-        public string? ProfileImageUrl { get; set; }
+		public string? ProfileImageUrl { get; set; }
 
-    }
+		[NotMapped]
+		public IFormFile? ImageFile { get; set; }
+
+	}
 }

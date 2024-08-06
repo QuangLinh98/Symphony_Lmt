@@ -45,6 +45,12 @@
 			margin-right: 15px;
 		}
 	</style>
+	@*ChatBot AI*@
+	<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+	<df-messenger intent="WELCOME"
+				  chat-title="SymphonyLmt"
+				  agent-id="249312a8-c13b-4e83-8220-27591980f03c"
+				  language-code="en"></df-messenger>
 </head>
 
 <body>
@@ -87,14 +93,22 @@
 			<ul class="nav navbar-nav navbar-right">
 				@if (Context.Session.GetStudentId() != null)
 				{
-					var profilePictureUrl = Context.Session.GetString("ProfilePictureUrl");
+					var profilePictureUrl = Context.Session.GetString("StudentImagePath");
 					<li class="nav-item dropdown ms-auto" style="margin-right: 35px;">
 						<a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-							<img src="~/Upload/StudentImages/eccb710b-b4f0-4b58-969f-37f6f0c59a42_5.png" alt="Profile Picture" class="rounded-circle" width="30" height="30">
+							@if (!string.IsNullOrEmpty(profilePictureUrl))
+							{
+								<img src="@profilePictureUrl" alt="Profile Picture" class="rounded-circle" width="30" height="30">
+							}
+							else
+							{
+								<img src="~/Upload/StudentImages/eccb710b-b4f0-4b58-969f-37f6f0c59a42_5.png" alt="Profile Picture" class="rounded-circle" width="30" height="30">
+							}
+							
 						</a>
 						<div class="dropdown-menu dropdown-menu-end" style="margin-right: 35px;">
 							<a asp-controller="Account" asp-action="Index" class="dropdown-item">Account</a>
-							<a asp-controller="Schedule" asp-action="Index" class="dropdown-item">Your Schedule</a>
+							<a asp-controller="Schedule" asp-action="MySchedule" class="dropdown-item">Your Schedule</a>
 							<div class="dropdown-divider"></div>
 							<form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post" style="display: none;">
 								<input type="submit" value="Logout" />

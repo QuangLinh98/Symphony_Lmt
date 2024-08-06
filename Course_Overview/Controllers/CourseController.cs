@@ -104,17 +104,17 @@ namespace Course_Overview.Controllers
 		public async Task<IActionResult> RegisterCourse(RegistrationCourse register)
 		{
 			// Lấy StudentId từ session
-			var userJson = HttpContext.Session.GetString("userSession");
-			if (userJson == null)
+			var studentId = HttpContext.Session.GetInt32("StudentID");
+			if (!studentId.HasValue)
 			{
 				return BadRequest("User is not logged in.");
 			}
 
-			// Deserialize JSON thành đối tượng User
-			var user = JsonConvert.DeserializeObject<User>(userJson);
-			if (user == null)
+			// Kiểm tra xem StudentId có tồn tại trong bảng Students không
+			var studentExists = await _dbContext.Students.AnyAsync(s => s.StudentID == studentId.Value);
+			if (!studentExists)
 			{
-				return BadRequest("User information is invalid.");
+				return BadRequest("Student does not exist.");
 			}
 
 			// Kiểm tra xem CourseId có tồn tại trong bảng Courses không
@@ -124,8 +124,8 @@ namespace Course_Overview.Controllers
 				return BadRequest("Course does not exist.");
 			}
 
-			// Gán UserID từ thông tin người dùng đã đăng nhập
-			register.ID = user.ID; // Gán StudentId
+			// Gán StudentID từ thông tin người dùng đã đăng nhập
+			register.StudentID = studentId.Value; // Gán StudentId
 			register.RegistrationDate = DateTime.Now;
 			register.Status = "Pending"; // Trạng thái ban đầu là Pending
 
@@ -133,7 +133,8 @@ namespace Course_Overview.Controllers
 			_dbContext.RegistrationCourses.Add(register);
 			await _dbContext.SaveChangesAsync();
 
-			return RedirectToAction("Index");
+			TempData["SuccessMessage"] = "Registration successful. We will respond via your email, please check your email. Thank you.";
+			return RedirectToAction("Index", "Course");
 		}
 	}
 }

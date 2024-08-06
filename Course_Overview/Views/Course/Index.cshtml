@@ -17,6 +17,18 @@
 				</button>
 			</form>
 		</div>
+
+		@*Show temptData Success*@
+		@{
+			var successMessage = TempData["SuccessMessage"] as string;
+		}
+
+		@if (!string.IsNullOrEmpty(successMessage))
+		{
+			<div class="alert alert-success" role="alert">
+				@successMessage
+			</div>
+		}
 	</div>
 	
 	<div class="row">

@@ -67,6 +67,8 @@ namespace LModels
         public ICollection<SubjectScores>? SubjectScores { get; set; }
         public ICollection<FeedBack>? FeedBacks { get; set; }
         public virtual ICollection<ClassStudent>? ClassStudents { get; set; }
-        
-    }
+		public ICollection<RegistrationCourse>? RegistrationCourses { get; set; }
+		public ICollection<Schedule>? Schedules { get; set; }
+
+	}
 }

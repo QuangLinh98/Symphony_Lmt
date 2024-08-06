@@ -5,6 +5,14 @@
 
 <form asp-action="Create" method="post">
     <div class="mb-3">
+        <label asp-for="StudentID" class="form-label">Student Name</label>
+        <select asp-for="StudentID" class="form-select" asp-items="ViewBag.Student">
+            <option value="">Select Student</option>
+        </select>
+        <span asp-validation-for="StudentID" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
         <label asp-for="CourseID" class="form-label">Course</label>
         <select asp-for="CourseID" class="form-select" asp-items="ViewBag.Courses">
             <option value="">Select Course</option>

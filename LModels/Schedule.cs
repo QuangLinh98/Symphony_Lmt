@@ -14,7 +14,10 @@ namespace LModels
         [Required]
         public int ClassID { get; set; }
 
-        [Required(ErrorMessage = "StartDate is required.")]
+		[Required]
+		public int StudentID { get; set; }
+
+		[Required(ErrorMessage = "StartDate is required.")]
         [DataType(DataType.Date, ErrorMessage = "StartDate must be a valid date.")]
         public DateTime StartDate { get; set; }     //Ngày bắt đầu môn học 
 
@@ -38,6 +41,7 @@ namespace LModels
         [StringLength(50, ErrorMessage = "Room cannot be longer than 50 characters.")]
         public string Room { get; set; }
         public Course? Course {  get; set; } 
-        public Class? Class { get; set; }
-    }
+        public Class? Class { get; set; }	
+		public Student? Student { get; set; } 
+	}
 }

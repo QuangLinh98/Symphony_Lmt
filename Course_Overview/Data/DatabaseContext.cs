@@ -100,17 +100,23 @@ namespace Course_Overview.Data
                 .WithMany(cl => cl.Schedules)
                 .HasForeignKey(t => t.ClassID);
 
-            //Cấu hình mối quan hệ giữa bảng RegistrationCourse vơi Course
-            modelBuilder.Entity<RegistrationCourse>()
+			//Cấu hình mối quan hệ giữa Schedule với Student
+			modelBuilder.Entity<Schedule>()
+				.HasOne(t => t.Student)
+				.WithMany(cl => cl.Schedules)
+				.HasForeignKey(t => t.StudentID);
+
+			//Cấu hình mối quan hệ giữa bảng RegistrationCourse vơi Course
+			modelBuilder.Entity<RegistrationCourse>()
                 .HasOne(rc  => rc.Course)
                 .WithMany(c => c.RegistrationCourses)
                 .HasForeignKey(rc => rc.CourseID);
 
             //Cấu hình mối quan hệ giữa bảng RegistrationCourse vơi User
             modelBuilder.Entity<RegistrationCourse>()
-                .HasOne(rc => rc.User)
+                .HasOne(rc => rc.Student)
                 .WithMany(u => u.RegistrationCourses)
-                .HasForeignKey(rc => rc.ID);
+                .HasForeignKey(rc => rc.StudentID);
 
             // EX_Subject - EX_Lessons
             modelBuilder.Entity<EX_Subject>()

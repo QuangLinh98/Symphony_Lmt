@@ -39,6 +39,7 @@ namespace Course_Overview.Areas.Admin.Controllers
         {
             ViewBag.Courses = new SelectList(_dbContext.Courses, "CourseID", "CourseName", "CourseID");
             ViewBag.Classes = new SelectList(_dbContext.Classes, "ClassID", "ClassName", "ClassID");
+            ViewBag.Student = new SelectList(_dbContext.Students, "StudentID", "Name", "StudentID");
             return View();
         }
 
@@ -59,7 +60,8 @@ namespace Course_Overview.Areas.Admin.Controllers
             }
             ViewBag.Courses = new SelectList(_dbContext.Courses, "CourseID", "CourseName", "CourseID");
             ViewBag.Classes = new SelectList(_dbContext.Classes, "ClassID", "ClassName", "ClassID");
-            return View(schedule);
+			ViewBag.Student = new SelectList(_dbContext.Students, "StudentID", "Name", "StudentID");
+			return View(schedule);
         }
 
         public async Task<IActionResult>Update(int id)
@@ -71,7 +73,8 @@ namespace Course_Overview.Areas.Admin.Controllers
             }
             ViewBag.Courses = new SelectList(_dbContext.Courses, "CourseID", "CourseName", "CourseID");
             ViewBag.Classes = new SelectList(_dbContext.Classes, "ClassID", "ClassName", "ClassID");
-            return View(ExistingSchedule);
+			ViewBag.Student = new SelectList(_dbContext.Students, "StudentID", "Name", "StudentID");
+			return View(ExistingSchedule);
         }
 
         [HttpPost]
@@ -91,7 +94,8 @@ namespace Course_Overview.Areas.Admin.Controllers
             }
             ViewBag.Courses = new SelectList(_dbContext.Courses, "CourseID", "CourseName", "CourseID");
             ViewBag.Classes = new SelectList(_dbContext.Classes, "ClassID", "ClassName", "ClassID");
-            return View(schedule);
+			ViewBag.Student = new SelectList(_dbContext.Students, "StudentID", "Name", "StudentID");
+			return View(schedule);
         }
 
         public async Task<IActionResult>Delete(int id)

@@ -45,7 +45,7 @@ namespace LModels
 
 		public ICollection<UserRole> UserRoles { get; set; }
 		public ICollection<UserPermission> UserPermissions { get; set; }
-		public ICollection<RegistrationCourse> RegistrationCourses { get; set; }
+		
 
 	}
 }

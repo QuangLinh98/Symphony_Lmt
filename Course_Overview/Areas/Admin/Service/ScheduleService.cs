@@ -34,6 +34,7 @@ namespace Course_Overview.Areas.Admin.Service
             return await _dbContext.Schedules
                 .Include(sc => sc.Course)
                 .Include(sc => sc.Class)
+                .Include(sc => sc.Student)
                 .ToListAsync();
         }
 

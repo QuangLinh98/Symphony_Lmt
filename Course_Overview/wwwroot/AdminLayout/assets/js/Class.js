@@ -24,7 +24,7 @@
                 "className": "text-center ",
                 "width": "20%",
                 "render": function (data) {
-                    return `<h6>${data}</h6>`;
+                    return data ? `<h6>${data}</h6>` : '';
                 }
             },
             {
@@ -33,9 +33,27 @@
                 "width": "10%",
             },
             {
+                "data": "StartDate",
+                "className": "text-center",
+                "width": "10%",
+                "render": function (data) {
+                    return data ? data : '';
+                }
+            },
+            {
+                "data": "EndDate",
+                "className": "text-center",
+                "width": "10%",
+                "render": function (data) {
+                    return data ? data : '';
+                }
+            },
+            {
                 "data": "ClassType",
                 "className": "text-center ",
-                "width": "20%",            },
+                "width": "20%",
+            },
+
             {
                 "data": 'ClassID',
                 "render": function (data) {
