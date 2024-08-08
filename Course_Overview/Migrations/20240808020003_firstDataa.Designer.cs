@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Course_Overview.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240803060233_TableRegisCourseDB")]
-    partial class TableRegisCourseDB
+    [Migration("20240808020003_firstDataa")]
+    partial class firstDataa
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,10 +83,16 @@ namespace Course_Overview.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
+
                     b.Property<decimal>("Fee")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<int>("TeacherID")
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("TeacherID")
                         .HasColumnType("int");
 
                     b.HasKey("ClassID");
@@ -691,9 +697,6 @@ namespace Course_Overview.Migrations
                     b.Property<int>("CourseID")
                         .HasColumnType("int");
 
-                    b.Property<int>("ID")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("RegistrationDate")
                         .HasColumnType("datetime2");
 
@@ -701,11 +704,14 @@ namespace Course_Overview.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("StudentID")
+                        .HasColumnType("int");
+
                     b.HasKey("RegistrationCourseID");
 
                     b.HasIndex("CourseID");
 
-                    b.HasIndex("ID");
+                    b.HasIndex("StudentID");
 
                     b.ToTable("RegistrationCourses");
                 });
@@ -783,11 +789,16 @@ namespace Course_Overview.Migrations
                     b.Property<DateTime>("StartTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("StudentID")
+                        .HasColumnType("int");
+
                     b.HasKey("ScheduleID");
 
                     b.HasIndex("ClassID");
 
                     b.HasIndex("CourseID");
+
+                    b.HasIndex("StudentID");
 
                     b.ToTable("Schedules");
                 });
@@ -811,12 +822,27 @@ namespace Course_Overview.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("EmailConfirmationToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("FailedAttempts")
+                        .HasColumnType("int");
+
                     b.Property<string>("IdentityCard")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ImagePath")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsNewUser")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LockoutEnd")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -829,6 +855,12 @@ namespace Course_Overview.Migrations
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ResetPasswordToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("ResetPasswordTokenExpiration")
+                        .HasColumnType("datetime2");
 
                     b.HasKey("StudentID");
 
@@ -1045,9 +1077,7 @@ namespace Course_Overview.Migrations
                 {
                     b.HasOne("LModels.Teacher", "Teacher")
                         .WithMany("Classes")
-                        .HasForeignKey("TeacherID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("TeacherID");
 
                     b.Navigation("Teacher");
                 });
@@ -1243,20 +1273,20 @@ namespace Course_Overview.Migrations
             modelBuilder.Entity("LModels.RegistrationCourse", b =>
                 {
                     b.HasOne("LModels.Course", "Course")
-                        .WithMany()
+                        .WithMany("RegistrationCourses")
                         .HasForeignKey("CourseID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("LModels.User", "User")
-                        .WithMany()
-                        .HasForeignKey("ID")
+                    b.HasOne("LModels.Student", "Student")
+                        .WithMany("RegistrationCourses")
+                        .HasForeignKey("StudentID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Course");
 
-                    b.Navigation("User");
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("LModels.RolePermission", b =>
@@ -1292,9 +1322,17 @@ namespace Course_Overview.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("LModels.Student", "Student")
+                        .WithMany("Schedules")
+                        .HasForeignKey("StudentID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Class");
 
                     b.Navigation("Course");
+
+                    b.Navigation("Student");
                 });
 
             modelBuilder.Entity("LModels.SubjectScores", b =>
@@ -1374,6 +1412,8 @@ namespace Course_Overview.Migrations
 
             modelBuilder.Entity("LModels.Course", b =>
                 {
+                    b.Navigation("RegistrationCourses");
+
                     b.Navigation("Schedules");
 
                     b.Navigation("Topics");
@@ -1433,6 +1473,10 @@ namespace Course_Overview.Migrations
                     b.Navigation("LabSessions");
 
                     b.Navigation("Payments");
+
+                    b.Navigation("RegistrationCourses");
+
+                    b.Navigation("Schedules");
 
                     b.Navigation("SubjectScores");
                 });

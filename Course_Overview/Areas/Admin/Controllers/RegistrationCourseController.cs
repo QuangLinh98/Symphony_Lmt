@@ -34,6 +34,7 @@ namespace Course_Overview.Areas.Admin.Controllers
 		{
 			var registration = await _dbContext.RegistrationCourses
                                                .Include(rc => rc.Student)
+                                               .Include(rc => rc.Course)
                                                .FirstOrDefaultAsync(rc => rc.RegistrationCourseID == id);
 			if (registration == null)
 			{
@@ -57,7 +58,10 @@ namespace Course_Overview.Areas.Admin.Controllers
                 "RegistrationCourse",
 				new { token }, protocol: HttpContext.Request.Scheme);
 
-            await _emailService.SendMail(student.Email, "Exam schedule announcement", $" Dear Nguyen Quang Linh, Symphony Center has confirmed your registration for the NodeJS course. Please click on the link to proceed to the placement test: <a href='{callbackUrl}'>link</a>");
+            var studentName = student.Name;
+            var courseName = registration.Course.CourseName;
+
+            await _emailService.SendMail(student.Email, "Exam schedule announcement", $" Dear {studentName}, Symphony Center has confirmed your registration for the {courseName} course. Please click on the link to proceed to the placement test: <a href='{callbackUrl}'>link</a>");
             TempData["SuccessMessage"] = "Send mail to user successful.";
 
             return RedirectToAction("Index");
@@ -80,8 +84,8 @@ namespace Course_Overview.Areas.Admin.Controllers
 					student.EmailConfirmed = true;
 					student.EmailConfirmationToken = null;
                     await _studentRepository.UpdateStudent(student);
-                    TempData["SuccessMessage"] = "Email confirmed successfully. You can start the exam now.";
-                    return RedirectToAction("Login");
+                    TempData["SuccessMessage"] = "Email confirmed successfully. Please proceed to the exams.";
+                    return RedirectToAction("Index", "Exams", new { area = ""});
                 }
 
                 TempData["ErrorMessage"] = "Invalid token.";
@@ -91,7 +95,7 @@ namespace Course_Overview.Areas.Admin.Controllers
 
                 TempData["ErrorMessage"] = "An error occurred while confirming your email. Please try again later.";
             }
-            return RedirectToAction("Index");
+            return RedirectToAction("Index", "Exams", new { area = "" });
         }
 
         //Phương thức từ chối đăng ký 

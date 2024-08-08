@@ -187,17 +187,10 @@ namespace Course_Overview.Controllers
 		}
 
 		[HttpPost]
-		public async Task<IActionResult> Register(Student student, IFormFile imageFile, string otp)
+		public async Task<IActionResult> Register(Student student, IFormFile imageFile, string? otp)
 		{
 			if (ModelState.IsValid)
 			{
-				// Kiểm tra OTP
-				var sessionOtp = HttpContext.Session.GetString("GeneratedOtp");
-				if (otp != sessionOtp)
-				{
-					ViewBag.OtpError = "Invalid OTP.";
-					return View(student);
-				}
 
 				// Kiểm tra xem email đã tồn tại chưa
 				var emailExisting = await _context.Students.AnyAsync(s => s.Email == student.Email);
@@ -215,7 +208,6 @@ namespace Course_Overview.Controllers
 					return View(student);
 				}
 
-				// Xử lý ảnh nếu có
 				if (imageFile != null && imageFile.Length > 0)
 				{
 					var subFolder = "StudentImages";
@@ -225,8 +217,13 @@ namespace Course_Overview.Controllers
 
 				student.Password = _passwordHasher.HashPassword(student, student.Password);
 
-				// Thêm sinh viên vào cơ sở dữ liệu
-				_context.Students.Add(student);
+                // Tạo mã xác nhận email
+                var token = Guid.NewGuid().ToString();
+                student.EmailConfirmationToken = token;
+                student.EmailConfirmed = false;
+
+                // Thêm sinh viên vào cơ sở dữ liệu
+                _context.Students.Add(student);
 				await _context.SaveChangesAsync();
 
                 // Lấy ClassID hợp lệ từ cơ sở dữ liệu
@@ -242,22 +239,38 @@ namespace Course_Overview.Controllers
                 var student1 = new ClassStudent
 				{
 					StudentID = student.StudentID,
-                    ClassID = classId // Đảm bảo rằng lớp học với ID = 1 tồn tại trong cơ sở dữ liệu
+                    ClassID = classId 
                 };
 				_context.ClassStudents.Add(student1);
 				await _context.SaveChangesAsync();
 
-				// Gửi email thông báo
-				var fromAddress = new MailAddress(_emailSettings.FromEmail, "Symphony");
+                // Tạo OTP và gửi email
+                var generatedOtp = new Random().Next(100000, 999999).ToString();
+                HttpContext.Session.SetString("GeneratedOtp", generatedOtp);
+
+
+                // Gửi email thông báo với nút xác nhận
+                var callbackUrl = Url.Action(
+                    "ConfirmEmail",
+                    "Account",
+                    new { token },
+                    protocol: HttpContext.Request.Scheme
+                );
+
+                // Gửi email thông báo
+                var fromAddress = new MailAddress(_emailSettings.FromEmail, "Symphony");
 				var toAddress = new MailAddress(student.Email);
 				string fromPassword = _emailSettings.FromPassword;
 				const string subject = "Comfirm email";
-				string body = @"
-                    <p>Confirm your email.</p>
-                    <p>Please confirm your account by clicking this link: <a href='https://localhost:7210/Account/Login'></a></p>
-                    <p>Best regards,<br>Symphony</p>";
+                string body = $@"
+             <p>Dear {student.Name},</p>
+						<p>Your OTP code for Symphony registration is:</p>
+						<h2 style='color: #007bff;'>{generatedOtp}</h2>
+						<p>Please enter this code on the registration page to complete your registration.</p>
+						<p>If you did not request this, please ignore this email.</p>
+						<p>Best regards,<br>Symphony</p>";
 
-				var smtp = new SmtpClient
+                var smtp = new SmtpClient
 				{
 					Host = _emailSettings.Host,
 					Port = _emailSettings.Port,
@@ -275,18 +288,78 @@ namespace Course_Overview.Controllers
 				{
 					smtp.Send(message);
 				}
-				TempData["SuccessMessage"] = "Registration successful. Please check your email to confirm your account.";
+                TempData["Email"] = student.Email;
+                return RedirectToAction("VerifyOtp");
+            }
 
-				return RedirectToAction("Login");
-			}
+            return View(student);
+        }
 
-			ViewBag.OtpError = "Invalid OTP.";
-			return View(student);
-		}
+        public IActionResult VerifyOtp()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> VerifyOtp(string otp)
+        {
+            var sessionOtp = HttpContext.Session.GetString("GeneratedOtp");
+            if (otp == sessionOtp)
+            {
+                // Xác nhận email và hoàn thành đăng ký
+                var email = TempData["Email"] as string;
+                var student = await _context.Students.FirstOrDefaultAsync(s => s.Email == email);
+                if (student != null)
+                {
+                    student.EmailConfirmed = true;
+                    _context.Students.Update(student);
+                    await _context.SaveChangesAsync();
+
+                    TempData["SuccessMessage"] = "Registration successful and email confirmed.";
+                    return RedirectToAction("Login");
+                }
+            }
+
+            ViewBag.OtpError = "Invalid OTP.";
+            return View();
+        }
 
 
-		// Đăng nhập
-		[HttpGet]
+        //Phương thức Comfirm
+        public async Task<IActionResult> ConfirmEmail(string token)
+        {
+            if (string.IsNullOrEmpty(token))
+            {
+                TempData["ErrorMessage"] = "Invalid token.";
+                return RedirectToAction("Index");
+            }
+
+            try
+            {
+                var student = await _studentRepository.GetStudentByEmailConfirmationTokenAsync(token);
+                if (student != null)
+                {
+                    student.EmailConfirmed = true;
+                    student.EmailConfirmationToken = null;
+                    await _studentRepository.UpdateStudent(student);
+                    TempData["SuccessMessage"] = "Email confirmed successfully. You can now log in.";
+
+                    return RedirectToAction("Login");
+                }
+
+                TempData["ErrorMessage"] = "Invalid token.";
+            }
+            catch (Exception ex)
+            {
+
+                TempData["ErrorMessage"] = "An error occurred while confirming your email. Please try again later.";
+            }
+
+            return RedirectToAction("Index");
+        }
+
+        // Đăng nhập
+        [HttpGet]
 		public IActionResult Login()
 		{
 			return View();
@@ -305,7 +378,7 @@ namespace Course_Overview.Controllers
 			var student = await _studentRepository.GetStudentByEmail(email);
 
 			//kiểm tra email đã đươcj xác thực hay chưa 
-			if (student.IsNewUser && !student.EmailConfirmed)
+			if ( !student.EmailConfirmed)
 			{
 				TempData["ErrorMessage"] = "Please confirm your email before logging in.";
 				return RedirectToAction("Login");
@@ -543,7 +616,7 @@ namespace Course_Overview.Controllers
 			return _context.Students.Any(e => e.StudentID == id);
 		}
 
-		[HttpPost]
+	/*	[HttpPost]
 		public IActionResult SendOtp(string email)
 		{
 			// Generate OTP
@@ -579,7 +652,7 @@ namespace Course_Overview.Controllers
 			}
 
 			return Json(new { success = true });
-		}
+		}*/
 	}
 }
 

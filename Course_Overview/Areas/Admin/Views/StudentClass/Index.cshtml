@@ -1,46 +1,36 @@
 ﻿@model IEnumerable<LModels.ExModel.ClassStudent>
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <title>Student List</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <style>
-        .pagination {
-            margin-top: 20px;
-        }
-
-            .pagination .page-item.disabled .page-link {
-                pointer-events: none;
-            }
-        /* Thêm CSS để căn chỉnh footer */
-        .footer {
-            background-color: #f8f9fa;
-            padding: 10px;
-            text-align: center;
-            margin-top: 20px;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
-   
-        <div class="form-group">
-            <label for="searchTerm">Search:</label>
-            <input type="text" id="searchTerm" class="form-control" placeholder="Enter search term" />
-        </div>
-        <div class="form-group">
-            <label for="feeStatusFilter">Tuition Fee Status:</label>
-            <select id="feeStatusFilter" class="form-control">
-                <option value="">All</option>
-                <option value="Paymented">Paymented</option>
-                <option value="Not paymented">Not paymented</option>
-            </select>
-        </div>
 
-        <form id="deleteForm" method="post" action="/Admin/StudentClass/DeleteSelected">
-            <button type="button" class="btn btn-danger" onclick="confirmDelete()">Delete Selected</button>
-            <table class="table table-bordered">
+
+
+    <h2 class="mb-4">Student Management</h2>
+
+    <!-- Tạo hộp chọn để tìm kiếm theo trạng thái -->
+    <div class="form-group">
+        <label for="statusFilter">Filter by Status:</label>
+        <select id="statusFilter" class="form-control">
+            <option value="">All</option>
+            <option value="Paymented">Paymented</option>
+            <option value="Not paymented">Not paymented</option>
+           @*  <option value="Unknown">Unknown</option> *@
+        </select>
+    </div>
+
+    <form id="deleteForm" method="post" action="/Admin/StudentClass/DeleteSelected">
+        <div class="table-responsive">
+            <table id="studentTable" class="table table-bordered table-striped">
                 <thead class="thead-dark">
                     <tr>
                         <th></th> <!-- Cột cho checkbox -->
@@ -50,173 +40,181 @@
                         <th>Student Address</th>
                         <th>Student Code</th>
                         <th>Class Name</th>
-                        <th>
-                            <a href="#" onclick="sortTable('Fee')">Class Fee</a>
-                        </th>
-                        <th>
-                            <a href="#" onclick="sortTable('Status')">Tuition Fee Status</a>
-                        </th>
+                        <th>Class Fee</th>
+                        <th>Tuition Fee Status</th>
+                        <th>Edit</th>
                     </tr>
                 </thead>
-                <tbody id="studentTableBody">
+                <tbody>
                     @foreach (var item in Model)
                     {
-                        <tr data-status="@(item.Status.HasValue ? (item.Status.Value ? "Paymented" : "Not paymented") : "Unknown")"
-                            data-fee="@(item.Class?.Fee ?? 0)">
+                        <tr>
                             <td>
                                 <input type="checkbox" name="selectedStudents" value="@item.Student?.StudentID" />
                             </td>
                             <td>@item.Student?.Name</td>
                             <td>@item.Student?.Email</td>
                             <td>@item.Student?.Phone</td>
-                        <td>@item.Student?.Address</td>
-                        <td>@item.Student?.IdentityCard</td>
-                        <td>@item.Class?.ClassName</td>
-                        <td>
-                            @if (item.Class?.Fee != 0.00m)
-                            {
-                                @item.Class?.Fee
-                            }
-                            else
-                            {
-                                <span>Not Applicable</span>
-                            }
-                        </td>
-                        <td>
-                            @(item.Status.HasValue ? (item.Status.Value ? "Paymented" : "Not paymented") : "Unknown")
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-
-
+                            <td>@item.Student?.Address</td>
+                            <td>@item.Student?.IdentityCard</td>
+                            <td>@item.Class?.ClassName</td>
+                            <td>
+                                @if (item.Class?.Fee != 0.00m)
+                                {
+                                    @item.Class?.Fee
+                                }
+                                else
+                                {
+                                    <span>Not Applicable</span>
+                                }
+                            </td>
+                            <td>
+                                @(item.Status.HasValue ? (item.Status.Value ? "Paymented" : "Not paymented") : "Unknown")
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-warning btn-sm" data-toggle="modal" data-target="#editModal" data-id="@item.Student?.StudentID" data-name="@item.Student?.Name" data-email="@item.Student?.Email" data-phone="@item.Student?.Phone" data-address="@item.Student?.Address" data-identitycard="@item.Student?.IdentityCard" data-classname="@item.Class?.ClassName" data-fee="@item.Class?.Fee" data-status="@item.Status">Edit</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <button type="button" class="btn btn-danger mt-3" onclick="confirmDelete()">Delete Selected</button>
     </form>
-
-    <nav aria-label="Page navigation">
-        <ul id="pagination" class="pagination"></ul>
-    </nav>
-
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Modal -->
+    <!-- Modal -->
+    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editModalLabel">Edit Class Student</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <form id="editForm" method="post" action="/Admin/StudentClass/Edit">
+                    <div class="modal-body">
+                        <input type="hidden" id="studentId" name="StudentID" />
+                        <div class="form-group">
+                            <label for="studentName">Name</label>
+                            <input type="text" class="form-control" id="studentName" name="StudentName" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="studentEmail">Email</label>
+                            <input type="email" class="form-control" id="studentEmail" name="StudentEmail" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="studentPhone">Phone</label>
+                            <input type="text" class="form-control" id="studentPhone" name="StudentPhone" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="studentAddress">Address</label>
+                            <input type="text" class="form-control" id="studentAddress" name="StudentAddress" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="studentIdentityCard">Identity Card</label>
+                            <input type="text" class="form-control" id="studentIdentityCard" name="StudentIdentityCard" readonly />
+                        </div>
+                        <div class="form-group">
+                            <label for="classSelect">Class</label>
+                            <select id="classSelect" class="form-control" name="ClassID"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="tuitionFeeStatus">Tuition Fee Status</label>
+                            <input type="text" class="form-control" id="tuitionFeeStatus" name="TuitionFeeStatus" readonly />
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const itemsPerPage = 10;
-            let currentPage = 1;
-            const searchInput = document.getElementById('searchTerm');
-            const feeStatusFilter = document.getElementById('feeStatusFilter');
-            const tableBody = document.getElementById('studentTableBody');
-            const paginationDiv = document.getElementById('pagination');
-            const allRows = Array.from(tableBody.querySelectorAll('tr'));
+        $(document).ready(function () {
+            // Khởi tạo DataTables
+            var table = $('#studentTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true,
+                "lengthMenu": [5, 10, 25, 50, 75, 100]
+            });
 
-            function renderTable() {
-                const searchTerm = searchInput.value.toLowerCase();
-                const selectedStatus = feeStatusFilter.value;
+            // Tìm kiếm theo trạng thái
+            $('#statusFilter').on('change', function () {
+                var selectedStatus = $(this).val();
 
-                let filteredRows = allRows.filter(row => {
-                    const name = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                    const email = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
-                    const phone = row.querySelector('td:nth-child(4)').textContent.toLowerCase();
-                    const address = row.querySelector('td:nth-child(5)').textContent.toLowerCase();
-                    const status = row.getAttribute('data-status');
+                // Kiểm tra giá trị tìm kiếm
+                if (selectedStatus === "") {
+                    // Nếu không có giá trị chọn, xóa tìm kiếm
+                    table.column(8).search('', true, false).draw();
+                } else {
+                    // Tìm kiếm theo trạng thái đã chọn
+                    table.column(8).search('^' + selectedStatus + '$', true, false).draw();
+                }
+            });
 
-                    const matchesSearch = name.includes(searchTerm) || email.includes(searchTerm) || phone.includes(searchTerm) || address.includes(searchTerm);
-                    const matchesStatus = selectedStatus === "" || status === selectedStatus;
+            // Cập nhật dữ liệu cho modal khi được kích hoạt
+            $('#editModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Nút Edit
+                var id = button.data('id');
+                var name = button.data('name');
+                var email = button.data('email');
+                var phone = button.data('phone');
+                var address = button.data('address');
+                var identityCard = button.data('identitycard');
+                var classId = button.data('classid');
+                var status = button.data('status');
 
-                    return matchesSearch && matchesStatus;
-                });
+                var modal = $(this);
+                modal.find('#studentId').val(id);
+                modal.find('#studentName').val(name);
+                modal.find('#studentEmail').val(email);
+                modal.find('#studentPhone').val(phone);
+                modal.find('#studentAddress').val(address);
+                modal.find('#studentIdentityCard').val(identityCard);
+                modal.find('#tuitionFeeStatus').val(status);
 
-                const totalPages = Math.ceil(filteredRows.length / itemsPerPage);
-                const start = (currentPage - 1) * itemsPerPage;
-                const end = start + itemsPerPage;
-                const paginatedRows = filteredRows.slice(start, end);
-
-                tableBody.innerHTML = '';
-                paginatedRows.forEach(row => tableBody.appendChild(row));
-
-                renderPagination(totalPages);
-            }
-
-            function renderPagination(totalPages) {
-                paginationDiv.innerHTML = '';
-
-                if (totalPages > 1) {
-                    const prevButton = document.createElement('li');
-                    prevButton.className = 'page-item ' + (currentPage === 1 ? 'disabled' : '');
-                    prevButton.innerHTML = '<a class="page-link" href="#" onclick="changePage(' + (currentPage - 1) + ')">Previous</a>';
-                    paginationDiv.appendChild(prevButton);
-
-                    for (let i = 1; i <= totalPages; i++) {
-                        const pageButton = document.createElement('li');
-                        pageButton.className = 'page-item ' + (currentPage === i ? 'active' : '');
-                        pageButton.innerHTML = '<a class="page-link" href="#" onclick="changePage(' + i + ')">' + i + '</a>';
-                        paginationDiv.appendChild(pageButton);
+                // Nạp danh sách lớp vào select
+                $.ajax({
+                    url: '@Url.Action("GetClasses", "StudentClass")', // Đảm bảo URL chính xác
+                    type: 'GET',
+                    success: function (data) {
+                        var select = modal.find('#classSelect');
+                        select.empty(); // Xóa dữ liệu cũ
+                        select.append('<option value="">Select a class</option>');
+                        $.each(data, function (index, classItem) {
+                            // Chuyển đổi StartDate và EndDate thành chuỗi ngày
+                            var startDate = new Date(classItem.startDate).toLocaleDateString();
+                            var endDate = new Date(classItem.endDate).toLocaleDateString();
+                            // Tạo thẻ option với thông tin ClassName, StartDate và EndDate
+                            select.append('<option value="' + classItem.classID + '"' +
+                                (classItem.classID === classId ? ' selected' : '') + '>' +
+                                classItem.className + ' (Start: ' + startDate + ' - End: ' + endDate + ')</option>');
+                        });
                     }
-
-                    const nextButton = document.createElement('li');
-                    nextButton.className = 'page-item ' + (currentPage === totalPages ? 'disabled' : '');
-                    nextButton.innerHTML = '<a class="page-link" href="#" onclick="changePage(' + (currentPage + 1) + ')">Next</a>';
-                    paginationDiv.appendChild(nextButton);
-                }
-            }
-
-            function changePage(page) {
-                if (page >= 1 && page <= Math.ceil(allRows.length / itemsPerPage)) {
-                    currentPage = page;
-                    renderTable();
-                }
-            }
-
-            function sortTable(column) {
-                const rows = Array.from(tableBody.querySelectorAll('tr'));
-                const sortedRows = rows.sort((a, b) => {
-                    const aValue = column === 'Fee' ? parseFloat(a.getAttribute('data-fee')) : a.getAttribute('data-status');
-                    const bValue = column === 'Fee' ? parseFloat(b.getAttribute('data-fee')) : b.getAttribute('data-status');
-
-                    return aValue > bValue ? 1 : -1;
                 });
-
-                tableBody.innerHTML = '';
-                sortedRows.forEach(row => tableBody.appendChild(row));
-
-                renderTable();
-            }
-
-            function confirmDelete() {
-                const selected = document.querySelectorAll('input[name="selectedStudents"]:checked');
-                if (selected.length === 0) {
-                    alert('Please select at least one student to delete.');
-                    return;
-                }
-
-                if (confirm('Are you sure you want to delete the selected students?')) {
-                    document.getElementById('deleteForm').submit();
-                }
-            }
-
-            searchInput.addEventListener('input', renderTable);
-            feeStatusFilter.addEventListener('change', renderTable);
-            renderTable();
+            });
         });
 
-        function changePage(page) {
-            const event = new Event('changePage');
-            event.page = page;
-            document.dispatchEvent(event);
-        }
-
-        function sortTable(column) {
-            const event = new Event('sortTable');
-            event.column = column;
-            document.dispatchEvent(event);
-        }
-
         function confirmDelete() {
-            const event = new Event('confirmDelete');
-            document.dispatchEvent(event);
+            var selected = document.querySelectorAll('input[name="selectedStudents"]:checked');
+            if (selected.length === 0) {
+                alert('Please select at least one student to delete.');
+                return;
+            }
+
+            if (confirm('Are you sure you want to delete the selected students?')) {
+                document.getElementById('deleteForm').submit();
+            }
         }
+
     </script>
+
+
 </body>
 </html>

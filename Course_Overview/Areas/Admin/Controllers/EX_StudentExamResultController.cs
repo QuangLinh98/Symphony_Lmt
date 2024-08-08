@@ -33,7 +33,7 @@ namespace Course_Overview.Areas.Admin.Controllers
 				.Include(r => r.Student) // Bao gồm thông tin sinh viên
 				.ThenInclude(s => s.ClassStudents) // Bao gồm thông tin lớp học qua ClassStudents
 				.Include(r => r.Exam) // Bao gồm thông tin kỳ thi
-				.Where(r => r.Student.ClassStudents.Any(cs => cs.ClassID == 1)) // Lọc sinh viên thuộc lớp với ClassID = 1
+/*				.Where(r => r.Student.ClassStudents.Any(cs => cs.ClassID == 1)) // Lọc sinh viên thuộc lớp với ClassID = 1*/
 				.GroupBy(r => new
 				{
 					r.StudentID,

@@ -41,13 +41,23 @@ namespace LModels
 
 		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
 		{
-			if (EndDate <= StartDate)
-			{
-				yield return new ValidationResult(
-					"EndDate must be greater than StartDate",
-					new[] { nameof(EndDate) }
-				);
-			}
-		}
+            // Kiểm tra StartDate không phải là ngày đã qua
+            if (StartDate < DateOnly.FromDateTime(DateTime.Today))
+            {
+                yield return new ValidationResult(
+                    "StartDate must be today or a future date",
+                    new[] { nameof(StartDate) }
+                );
+            }
+
+            // Kiểm tra EndDate phải lớn hơn StartDate
+            if (EndDate <= StartDate)
+            {
+                yield return new ValidationResult(
+                    "EndDate must be greater than StartDate",
+                    new[] { nameof(EndDate) }
+                );
+            }
+        }
 	}
 }

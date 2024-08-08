@@ -23,7 +23,7 @@
                             <label asp-for="Email" class="control-label"></label>
                             <input asp-for="Email" id="Email" class="form-control" />
                             <span asp-validation-for="Email" class="text-danger"></span>
-                            <button type="button" id="sendOtpButton" class="btn btn-secondary mt-2">Send OTP</button>
+                          @*   <button type="button" id="sendOtpButton" class="btn btn-secondary mt-2">Send OTP</button> *@
                         </div>
 
                         <div class="form-group">
@@ -56,12 +56,12 @@
                             <span asp-validation-for="ImageFile" class="text-danger"></span>
                         </div>
 
-                        <div class="form-group">
+                        @* <div class="form-group">
                             <label for="Otp" class="control-label">OTP</label>
                             <input id="Otp" name="Otp" class="form-control" />
                             <!-- Thay thế asp-validation-for bằng phần tử hiển thị thông báo lỗi tùy chỉnh -->
                             <span id="otpError" class="text-danger"></span>
-                        </div>
+                        </div> *@
 
                         <button type="submit" class="btn btn-primary btn-block">Register</button>
                     </form>
@@ -71,7 +71,7 @@
     </div>
 </div>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+@* <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
         // Hiển thị thông báo lỗi OTP nếu có
@@ -103,4 +103,4 @@
             }
         });
     });
-</script>
+</script> *@

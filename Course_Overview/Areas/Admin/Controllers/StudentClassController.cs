@@ -19,7 +19,6 @@ namespace Course_Overview.Areas.Admin.Controllers
             var classStudents = await _context.ClassStudents
                 .Include(cs => cs.Class)
                 .Include(cs => cs.Student)
-                .Where(cs => cs.ClassID != 1)
                 .ToListAsync();
 
             return View(classStudents);
