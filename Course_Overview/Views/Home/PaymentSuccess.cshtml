@@ -1,0 +1,30 @@
+﻿@{
+    ViewBag.Title = "Payment Success";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-body">
+                <h1 class="card-title">Payment Successful</h1>
+                <p class="card-text">Thank you, @ViewBag.StudentName, for your payment!</p>
+                <p class="card-text">You have successfully enrolled in the class: @ViewBag.ClassName.</p>
+                <p class="card-text">The tuition fee of @ViewBag.Fee:C has been received.</p>
+                <a href="/" class="btn btn-primary">Go to Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
+

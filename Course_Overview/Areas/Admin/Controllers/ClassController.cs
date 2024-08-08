@@ -11,7 +11,7 @@ namespace Course_Overview.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class ClassController : BaseController
-	{
+    {
         private readonly IClassRepository _classRepository;
         private readonly ITeacherRepository _teacherRepository;
 
@@ -23,7 +23,7 @@ namespace Course_Overview.Areas.Admin.Controllers
 
 
         public IActionResult Index()
-        {          
+        {
             return View();
         }
 
@@ -48,7 +48,7 @@ namespace Course_Overview.Areas.Admin.Controllers
 
         [HttpPost]
 
-        public async Task<IActionResult> Create( Class room)
+        public async Task<IActionResult> Create(Class room)
         {
             try
             {
@@ -66,18 +66,18 @@ namespace Course_Overview.Areas.Admin.Controllers
         }
 
 
-        public async Task<IActionResult>Update(int id)
+        public async Task<IActionResult> Update(int id)
         {
-			var teachers = await _teacherRepository.GetAllTeacher();
-			ViewBag.Teacher = new SelectList(teachers, "TeacherID", "FullName", "TeacherID");
+            var teachers = await _teacherRepository.GetAllTeacher();
+            ViewBag.Teacher = new SelectList(teachers, "TeacherID", "FullName", "TeacherID");
 
-			var roomExisting = await _classRepository.GetOneClass(id);
+            var roomExisting = await _classRepository.GetOneClass(id);
             return View(roomExisting);
         }
 
         [HttpPost]
 
-        public async Task<IActionResult>Update(Class room)
+        public async Task<IActionResult> Update(Class room)
         {
             try
             {
@@ -90,12 +90,12 @@ namespace Course_Overview.Areas.Admin.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", ex.Message);  
+                ModelState.AddModelError("", ex.Message);
             }
-			return View(room);
-		}
+            return View(room);
+        }
 
-        public async Task<IActionResult>Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var classExisting = await _classRepository.GetOneClass(id);
             if (classExisting == null)

@@ -1,10 +1,12 @@
-﻿
-
-using LModels.ExModel;
+﻿using LModels.ExModel;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LModels
 {
-	public class Class
+	public class Class : IValidatableObject
 	{
 		[Key]
 		[DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -12,7 +14,7 @@ namespace LModels
 
 		[Required(ErrorMessage = "Class name is required")]
 		public string ClassName { get; set; }
-		public int TeacherID { get; set; }
+		public int? TeacherID { get; set; }
 
 		[Required]
 		[Column(TypeName = "decimal(10,2)")]
@@ -23,6 +25,12 @@ namespace LModels
 		public string ClassType { get; set; }  //Phân loai lớp
 
 		[Required]
+		public DateOnly StartDate { get; set; }
+
+		[Required]
+		public DateOnly EndDate { get; set; }
+
+		[Required]
 		[DataType(DataType.MultilineText)]
 		public string Description { get; set; }
 
@@ -31,5 +39,15 @@ namespace LModels
 		public ICollection<ExamResult>? ExamResults { get; set; }
 		public ICollection<ClassStudent>? ClassStudents { get; set; }
 
+		public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+		{
+			if (EndDate <= StartDate)
+			{
+				yield return new ValidationResult(
+					"EndDate must be greater than StartDate",
+					new[] { nameof(EndDate) }
+				);
+			}
+		}
 	}
 }

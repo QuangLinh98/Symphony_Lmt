@@ -80,10 +80,7 @@
 				<a asp-controller="Home" asp-action="Index" class="nav-item nav-link active">Home</a>
 				<a asp-controller="About" asp-action="Index" class="nav-item nav-link">About Us</a>
 				<a asp-controller="Course" asp-action="Index" class="nav-item nav-link">Education program</a>
-
-
 				<a asp-controller="Exams" asp-action="index" class="nav-item nav-link">Exams</a>
-
 				<a asp-controller="OurTeam" asp-action="Index" class="nav-item nav-link">Our Team</a>
 				<a asp-controller="Contact" asp-action="Index" class="nav-item nav-link">Contact</a>
 				<a asp-controller="FAQ" asp-action="Index" class="nav-item nav-link">FAQ</a>
@@ -108,6 +105,7 @@
 						</a>
 						<div class="dropdown-menu dropdown-menu-end" style="margin-right: 35px;">
 							<a asp-controller="Account" asp-action="Index" class="dropdown-item">Account</a>
+							<a asp-controller="ClassStudent" asp-action="ClassInfo" class="dropdown-item">Info Class</a>
 							<a asp-controller="Schedule" asp-action="MySchedule" class="dropdown-item">Your Schedule</a>
 							<div class="dropdown-divider"></div>
 							<form id="logoutForm" asp-controller="Account" asp-action="Logout" method="post" style="display: none;">

@@ -10,7 +10,7 @@ namespace Course_Overview.Areas.Admin.Controllers
 {
     [Area("Admin")]
     public class StudentController : BaseController
-	{
+    {
         private readonly IStudentRepository _studentRepository;
         private readonly DatabaseContext _dbContext;
 
@@ -25,52 +25,52 @@ namespace Course_Overview.Areas.Admin.Controllers
             return View(students);
         }
 
-		public async Task<IActionResult> Create()
-		{
-			return View();
-		}
+        public async Task<IActionResult> Create()
+        {
+            return View();
+        }
 
-		[HttpPost]
-		public async Task<IActionResult> Create(Student student, IFormFile imageFile)
-		{
-			try
-			{
-				if (ModelState.IsValid)
-				{
-					var emailExisting = await _dbContext.Students.AnyAsync(s => s.Email == student.Email);
-					if (emailExisting)
-					{
-						ModelState.AddModelError("Email", "Email already exists.");
-						return View(student);
-					}
+        [HttpPost]
+        public async Task<IActionResult> Create(Student student, IFormFile imageFile)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var emailExisting = await _dbContext.Students.AnyAsync(s => s.Email == student.Email);
+                    if (emailExisting)
+                    {
+                        ModelState.AddModelError("Email", "Email already exists.");
+                        return View(student);
+                    }
 
-					var phoneExisting = await _dbContext.Students.AnyAsync(s => s.Phone == student.Phone);
-					if (phoneExisting)
-					{
-						ModelState.AddModelError("Phone", "Phone already exists.");
-						return View(student);
-					}
+                    var phoneExisting = await _dbContext.Students.AnyAsync(s => s.Phone == student.Phone);
+                    if (phoneExisting)
+                    {
+                        ModelState.AddModelError("Phone", "Phone already exists.");
+                        return View(student);
+                    }
 
-					if (imageFile != null && imageFile.Length > 0)
-					{
-						var subFolder = "StudentImages";
-						var saveImagePath = await UploadFile.SaveImage(subFolder, imageFile);
-						student.ImagePath = saveImagePath;
-					}
+                    if (imageFile != null && imageFile.Length > 0)
+                    {
+                        var subFolder = "StudentImages";
+                        var saveImagePath = await UploadFile.SaveImage(subFolder, imageFile);
+                        student.ImagePath = saveImagePath;
+                    }
 
-					await _studentRepository.AddStudent(student);
-					return RedirectToAction("Index");
-				}
-			}
-			catch (Exception ex)
-			{
-				ModelState.AddModelError("", ex.Message);
-			}
+                    await _studentRepository.AddStudent(student);
+                    return RedirectToAction("Index");
+                }
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+            }
 
-			return View(student);
-		}
+            return View(student);
+        }
 
-		/*public async Task<IActionResult>Update(int id)
+        /*public async Task<IActionResult>Update(int id)
 		{
 			var student = await _studentRepository.GetOneStudent(id);
             if (student == null)
@@ -80,39 +80,39 @@ namespace Course_Overview.Areas.Admin.Controllers
 			return View(student);
         }*/
 
-		[HttpPost]
-		public async Task<IActionResult> Update(Student student)
-		{
-			try
-			{
+        [HttpPost]
+        public async Task<IActionResult> Update(Student student)
+        {
+            try
+            {
                 if (ModelState.IsValid)
                 {
                     if (student.ImageFile != null)
                     {
-						//Xử lưu lý hình ảnh mới vào thư mục
-						var imagePath = await UploadFile.SaveImage("StudentImages", student.ImageFile);
+                        //Xử lưu lý hình ảnh mới vào thư mục
+                        var imagePath = await UploadFile.SaveImage("StudentImages", student.ImageFile);
                         if (!string.IsNullOrEmpty(imagePath))
                         {
                             if (!string.IsNullOrEmpty(student.ImagePath))
                             {
-								UploadFile.DeleteImage(student.ImagePath);
+                                UploadFile.DeleteImage(student.ImagePath);
                             }
 
-							student.ImagePath = imagePath;
+                            student.ImagePath = imagePath;
                         }
                     }
-					await _studentRepository.UpdateStudent(student);
-					return RedirectToAction("Index");
+                    await _studentRepository.UpdateStudent(student);
+                    return RedirectToAction("Index");
                 }
             }
-			catch (Exception ex)
-			{
-				ModelState.AddModelError("", ex.Message);
-			}
-			return View(student);
-		}
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", ex.Message);
+            }
+            return View(student);
+        }
 
-		/*public async Task<IActionResult>Delete(int id)
+        /*public async Task<IActionResult>Delete(int id)
 		{
 			try
 			{
@@ -137,5 +137,5 @@ namespace Course_Overview.Areas.Admin.Controllers
 			}
 			return View();
 		}*/
-	}
+    }
 }

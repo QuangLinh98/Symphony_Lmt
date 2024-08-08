@@ -4,14 +4,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Course_Overview.Controllers
 {
-	public class ClassStudentController : Controller
-	{
-		private readonly DatabaseContext _context;
+    public class ClassStudentController : Controller
+    {
+        private readonly DatabaseContext _context;
 
-		public ClassStudentController(DatabaseContext context)
-		{
-			_context = context;
-		}
+        public ClassStudentController(DatabaseContext context)
+        {
+            _context = context;
+        }
         public async Task<IActionResult> Index()
         {
             // Lấy StudentID từ Session
@@ -31,6 +31,22 @@ namespace Course_Overview.Controllers
                 .ToListAsync();
 
             return View(classStudents);
+        }
+        public async Task<IActionResult> ClassInfo()
+        {
+            var studentId = HttpContext.Session.GetInt32("StudentID");
+
+            if (studentId == null)
+            {
+                // Nếu không có StudentID trong session, chuyển hướng đến trang đăng nhập hoặc thông báo lỗi
+                return RedirectToAction("Login", "Account");
+            }
+            var classes = await _context.ClassStudents
+                .Include(cs => cs.Class)
+                .Include(cs => cs.Student)
+                .Where(cs => cs.StudentID == studentId)
+                .ToListAsync();
+            return View("ClassInfo", classes);
         }
     }
 }

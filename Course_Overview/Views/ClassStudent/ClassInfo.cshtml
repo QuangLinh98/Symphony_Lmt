@@ -1,0 +1,118 @@
+﻿@model IEnumerable<LModels.ExModel.ClassStudent>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Class Information</title>
+    <link rel="stylesheet" type="text/css" href="~/css/site.css" />
+    <style>
+        .class-info {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+            .class-info h2 {
+                margin-top: 0;
+            }
+
+            .class-info .info-row {
+                margin-bottom: 10px;
+                width: 100%;
+                display: flex;
+                justify-content: center;
+            }
+
+                .class-info .info-row span {
+                    font-weight: bold;
+                    margin-right: 5px;
+                }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            @foreach (var item in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title">Class Information</h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="info-row mb-2">
+                                <strong>Class Name:</strong> @item.Class?.ClassName
+                            </div>
+                            <div class="info-row mb-2">
+                                <strong>Start learn:</strong> @item.Class?.StartDate
+                            </div>
+                            <div class="info-row mb-2">
+                                <strong>End learn:</strong> @item.Class?.EndDate
+                            </div>
+                            @if (item.Class?.Fee != 0.00m)
+                            {
+                                <div class="info-row mb-2">
+                                    <strong>Class Fee:</strong> @item.Class?.Fee
+                                </div>
+                            }
+                            <div class="info-row">
+                                <span>Tuition Fee Status:</span> @(item.Status.HasValue
+                            ? (item.Status.Value ? "Paymented" : " Not paymented")
+                            : "")
+                            </div>
+
+                            @if (item.Class?.Fee != 0.00m && item.Status == false)
+                            {
+                                <form id="paypal-form-@item.ClassID-@item.StudentID" action="@Url.Action("ProcessPayment", "Payment")" method="post">
+                                    <input type="hidden" name="classId" value="@item.ClassID" />
+                                    <input type="hidden" name="studentId" value="@item.StudentID" />
+                                    <input type="hidden" name="fee" value="@item.Class?.Fee" />
+                                    <div id="paypal-button-container-@item.ClassID-@item.StudentID" class="my-3"></div>
+                                </form>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <script src="https://www.paypal.com/sdk/js?client-id=ASNL_c2deaYbwt2RiDT-hi1pB8ZX-mEcfkWOoMHRMWO61ao9DMQEAU5CL1-XgmkfSGtG6HszvaIwdNSf"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        @foreach (var item in Model)
+        {
+            @if (item.Class?.Fee != 0.00m && item.Status == false)
+            {
+                <text>
+                        paypal.Buttons({
+                            createOrder: function (data, actions) {
+                                return actions.order.create({
+                                    purchase_units: [{
+                                        amount: {
+                                            value: '@item.Class?.Fee'
+                                        }
+                                    }]
+                                });
+                            },
+                            onApprove: function (data, actions) {
+                                return actions.order.capture().then(function (details) {
+                                    alert('Transaction completed by ' + details.payer.name.given_name);
+                                    document.getElementById('paypal-form-@item.ClassID-@item.StudentID').submit();
+                                });
+                            }
+                        }).render('#paypal-button-container-@item.ClassID-@item.StudentID');
+                </text>
+            }
+        }
+                        });
+    </script>
+</body>
+</html>

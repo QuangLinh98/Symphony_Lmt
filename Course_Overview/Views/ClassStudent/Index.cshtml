@@ -4,7 +4,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Class Students</title>
+    <title>Student Information</title>
     <link rel="stylesheet" type="text/css" href="~/css/site.css" />
     <style>
         .student-info {
@@ -58,7 +58,7 @@
                                 }
                             </div>
                             <div class="info-row mb-2">
-                                <strong>User Name:</strong> @item.Student?.Name
+                                <strong>Student Name:</strong> @item.Student?.Name
                             </div>
                             <div class="info-row mb-2">
                                 <strong>Student Email:</strong> @item.Student?.Email
@@ -72,30 +72,6 @@
                             <div class="info-row mb-2">
                                 <strong>Student Code:</strong> @item.Student?.IdentityCard
                             </div>
-                            <div class="info-row mb-2">
-                                <strong>Class Name:</strong> @item.Class?.ClassName
-                            </div>
-                            @if (item.Class?.Fee != 0.00m)
-                            {
-                                <div class="info-row mb-2">
-                                    <strong>Class Fee:</strong> @item.Class?.Fee
-                                </div>
-                            }
-                            <div class="info-row mb-2">
-                                <strong>Tuition Fee Status:</strong> @(item.Status.HasValue
-                            ? (item.Status.Value ? "Paid" : "Not Paid")
-                            : "")
-                            </div>
-
-                            @if (item.Class?.Fee != 0.00m && item.Status == false)
-                            {
-                                <form id="paypal-form-@item.ClassID-@item.StudentID" action="@Url.Action("ProcessPayment", "Payment")" method="post">
-                                    <input type="hidden" name="classId" value="@item.ClassID" />
-                                    <input type="hidden" name="studentId" value="@item.StudentID" />
-                                    <input type="hidden" name="fee" value="@item.Class?.Fee" />
-                                    <div id="paypal-button-container-@item.ClassID-@item.StudentID" class="my-3"></div>
-                                </form>
-                            }
                         </div>
                         <div class="card-footer text-end">
                             <a href="@Url.Action("Edit", "Account", new { id = item.StudentID })" class="btn btn-primary">Edit</a>
@@ -105,38 +81,6 @@
             }
         </div>
     </div>
-
-
-    <script src="https://www.paypal.com/sdk/js?client-id=ASNL_c2deaYbwt2RiDT-hi1pB8ZX-mEcfkWOoMHRMWO61ao9DMQEAU5CL1-XgmkfSGtG6HszvaIwdNSf"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-        @foreach (var item in Model)
-        {
-            @if (item.Class?.Fee != 0.00m && item.Status == false)
-            {
-                <text>
-                        paypal.Buttons({
-                            createOrder: function (data, actions) {
-                                return actions.order.create({
-                                    purchase_units: [{
-                                        amount: {
-                                            value: '@item.Class?.Fee'
-                                        }
-                                    }]
-                                });
-                            },
-                            onApprove: function (data, actions) {
-                                return actions.order.capture().then(function (details) {
-                                    alert('Transaction completed by ' + details.payer.name.given_name);
-                                    document.getElementById('paypal-form-@item.ClassID-@item.StudentID').submit();
-                                });
-                            }
-                        }).render('#paypal-button-container-@item.ClassID-@item.StudentID');
-                </text>
-            }
-        }
-                    });
-    </script>
-
 </body>
 </html>
+

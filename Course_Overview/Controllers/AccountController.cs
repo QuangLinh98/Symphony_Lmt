@@ -229,12 +229,21 @@ namespace Course_Overview.Controllers
 				_context.Students.Add(student);
 				await _context.SaveChangesAsync();
 
-				// Thêm liên kết sinh viên và lớp học
-				var student1 = new ClassStudent
+                // Lấy ClassID hợp lệ từ cơ sở dữ liệu
+                int classId = await _context.Classes.Select(c => c.ClassID).FirstOrDefaultAsync();
+                if (classId == 0)
+                {
+                    ModelState.AddModelError("ClassID", "No class available.");
+                    return View(student);
+                }
+
+
+                // Thêm liên kết sinh viên và lớp học
+                var student1 = new ClassStudent
 				{
 					StudentID = student.StudentID,
-					ClassID = 1 // Đảm bảo rằng lớp học với ID = 1 tồn tại trong cơ sở dữ liệu
-				};
+                    ClassID = classId // Đảm bảo rằng lớp học với ID = 1 tồn tại trong cơ sở dữ liệu
+                };
 				_context.ClassStudents.Add(student1);
 				await _context.SaveChangesAsync();
 

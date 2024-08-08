@@ -20,6 +20,6 @@ namespace LModels.ExModel
 		public virtual Class Class { get; set; }
 
 		[ForeignKey("StudentID")]
-		public virtual Student Student { get; set; }
+		public virtual Student? Student { get; set; }
 	}
 }

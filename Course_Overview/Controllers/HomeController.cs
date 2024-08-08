@@ -76,5 +76,60 @@ namespace Course_Overview.Controllers
 		{
 			return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
 		}
-	}
+
+        [HttpGet]
+        public IActionResult PaymentSuccess(string studentEmail)
+        {
+            if (string.IsNullOrEmpty(studentEmail))
+            {
+                return BadRequest("Invalid input.");
+            }
+
+            // Tìm sinh viên
+            var student = _dbContext.Students.FirstOrDefault(s => s.Email == studentEmail);
+            if (student == null)
+            {
+                return NotFound("Student not found.");
+            }
+
+            // Tìm thông tin lớp học của sinh viên
+            var classStudent = _dbContext.ClassStudents
+                                         .Include(cs => cs.Class) // Đảm bảo bao gồm thông tin lớp học
+                                         .FirstOrDefault(cs => cs.StudentID == student.StudentID);
+
+            if (classStudent == null || classStudent.Class == null)
+            {
+                return NotFound("Class information not found.");
+            }
+
+            // Kiểm tra xem thanh toán đã được thực hiện chưa
+            if (classStudent.Status == true)
+            {
+                // Nếu thanh toán đã được thực hiện, chuyển hướng đến trang thông báo đã thanh toán
+                return RedirectToAction("PaymentAlreadyProcessed");
+            }
+
+            // Cập nhật trạng thái thành true
+            classStudent.Status = true;
+            _dbContext.Update(classStudent);
+            _dbContext.SaveChanges();
+
+            // Cập nhật ViewBag
+            ViewBag.ClassName = classStudent.Class.ClassName;
+
+            // Tiếp tục xử lý và trả về view
+            return View();
+        }
+
+        // Trang thông báo thanh toán đã được thực hiện
+        public IActionResult PaymentAlreadyProcessed()
+        {
+            return View(); // Trang này sẽ thông báo cho người dùng rằng thanh toán đã được thực hiện
+        }
+
+        public IActionResult PaymentCancel()
+        {
+            return View();
+        }
+    }
 }
